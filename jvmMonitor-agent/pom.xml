@@ -11,6 +11,20 @@
 
     <artifactId>jvmMonitor-agent</artifactId>
 
+    <dependencies>
+        <dependency>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-all</artifactId>
+            <version>4.1.33.Final</version>
+        </dependency>
+
+        <dependency>
+            <groupId>cn.hutool</groupId>
+            <artifactId>hutool-all</artifactId>
+            <version>4.6.3</version>
+        </dependency>
+    </dependencies>
+
     <build>
         <plugins>
             <plugin>
@@ -38,8 +52,8 @@
                             </descriptorRefs>
                             <archive>
                                 <manifestEntries>
-                                    <Premain-Class>com.xck.agent.CacheAgent</Premain-Class>
-                                    <Agent-Class>com.xck.agent.CacheAgent</Agent-Class>
+                                    <Premain-Class>com.xck.agent.MonitorAgent</Premain-Class>
+                                    <Agent-Class>com.xck.agent.MonitorAgent</Agent-Class>
                                     <Can-Redefine-Classes>true</Can-Redefine-Classes>
                                     <Can-Retransform-Classes>true</Can-Retransform-Classes>
                                 </manifestEntries>
