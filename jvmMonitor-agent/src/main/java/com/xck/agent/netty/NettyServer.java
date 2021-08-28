@@ -24,6 +24,10 @@ public class NettyServer extends Thread {
 
     @Override
     public void run() {
+        System.out.println("寻找可用端口...");
+
+
+
         System.out.println("启动服务端");
         EventLoopGroup bossGroup = new NioEventLoopGroup(2);
         EventLoopGroup workGroup = new NioEventLoopGroup(Runtime.getRuntime().availableProcessors() * 2);
@@ -41,7 +45,7 @@ public class NettyServer extends Thread {
                         }
                     });
 
-            channelFuture = serverBootstrap.bind(8080)
+            channelFuture = serverBootstrap.bind(8666)
                     .addListener(new GenericFutureListener<Future<? super Void>>() {
                         @Override
                         public void operationComplete(Future<? super Void> future) throws Exception {
@@ -49,11 +53,11 @@ public class NettyServer extends Thread {
                                 System.out.println("启动服务端成功");
                             }
                         }
-                    });
+                    }).sync();
 
             channelFuture.channel().closeFuture().sync();
             System.out.println("关闭服务端成功");
-        } catch (Exception e) {
+        } catch (Throwable e) {
             e.printStackTrace();
         } finally {
             workGroup.shutdownGracefully();

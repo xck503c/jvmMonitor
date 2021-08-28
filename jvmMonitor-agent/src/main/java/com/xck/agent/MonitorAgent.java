@@ -13,17 +13,14 @@ import java.lang.instrument.Instrumentation;
 public class MonitorAgent {
 
     public static void agentmain(String agentArgs, Instrumentation inst) {
-        NettyServer nettyServer = new NettyServer();
+        NettyServer nettyServer = null;
         try {
             System.out.println("attach start");
-
+            nettyServer = new NettyServer();
             nettyServer.start();
-
-            AnnotationScanner.scan("com.xck.agent");
-
+            AnnotationScanner.scan();
         } catch (Throwable e) {
             e.printStackTrace();
-        } finally {
             nettyServer.shutdown();
         }
     }

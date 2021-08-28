@@ -23,17 +23,19 @@ public class HttpServerHandler extends SimpleChannelInboundHandler<FullHttpReque
         ByteBuf resp = Unpooled.wrappedBuffer("{\"resp\":\"system error\"}".getBytes("UTF-8"));
 
         try {
-            //非指定接口
             String uri = msg.uri();
-            if (!AnnotationScanner.controllerMap.containsKey(uri)) {
+            AnnotationScanner.ObjExecutor objExecutor = AnnotationScanner.controllerMap.get(uri);
+            if (objExecutor == null) {
+                objExecutor = AnnotationScanner.originPluginMap.get(uri);
+            }
+            if (objExecutor == null) {
                 resp = Unpooled.wrappedBuffer("{\"resp\":\"404 NOT FOUND\"}".getBytes("UTF-8"));
                 return;
             }
 
             //执行控制器并返回响应
             ByteBuf byteBuf = msg.content();
-            AnnotationScanner.Executor executor = AnnotationScanner.controllerMap.get(uri);
-            String response = (String) executor.getMethod().invoke(executor.getObject()
+            String response = (String) objExecutor.getMethod().invoke(objExecutor.getObject()
                     , byteBuf.toString(Charset.forName("UTF-8")));
             resp = Unpooled.wrappedBuffer(response.getBytes("UTF-8"));
         } finally {

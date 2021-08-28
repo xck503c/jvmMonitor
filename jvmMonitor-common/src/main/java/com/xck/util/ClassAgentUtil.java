@@ -1,9 +1,10 @@
-package com.xck.agent.util;
+package com.xck.util;
 
 import cn.hutool.core.util.ClassUtil;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Map;
 
 /**
  * 类工具
@@ -61,7 +62,7 @@ public class ClassAgentUtil {
         for (int i = 0; i < param.length; i++) {
             classes[i] = param[i].getClass();
         }
-        Method method = cn.hutool.core.util.ClassUtil.getDeclaredMethod(instance.getClass(), methodName, classes);
+        Method method = ClassUtil.getDeclaredMethod(instance.getClass(), methodName, classes);
         method.setAccessible(true);
         return method.invoke(instance, param);
     }
@@ -77,6 +78,23 @@ public class ClassAgentUtil {
             throws IllegalAccessException, InstantiationException {
         Class clzz = ClassUtil.loadClass(className);
         return clzz.newInstance();
+    }
+
+    /**
+     * 根据类名创建对象并针对传参赋值
+     * @param className
+     * @param valueMap
+     * @return
+     * @throws IllegalAccessException
+     * @throws InstantiationException
+     */
+    public static Object newObjAndSetValue(String className, Map<String, Object> valueMap)
+            throws IllegalAccessException, InstantiationException, InvocationTargetException {
+        Object newObj = newObj(className);
+        for (Map.Entry<String, Object> entry : valueMap.entrySet()) {
+            methodObjInvoke(newObj, entry.getKey(), entry.getValue());
+        }
+        return newObj;
     }
 
     public static void main(String[] args) throws Exception{

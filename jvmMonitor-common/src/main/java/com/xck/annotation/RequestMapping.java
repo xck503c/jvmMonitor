@@ -1,4 +1,4 @@
-package com.xck.agent.annotation;
+package com.xck.annotation;
 
 import java.lang.annotation.*;
 
