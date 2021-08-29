@@ -29,7 +29,7 @@ public class HttpServerHandler extends SimpleChannelInboundHandler<FullHttpReque
                 objExecutor = AnnotationScanner.originPluginMap.get(uri);
             }
             if (objExecutor == null) {
-                resp = Unpooled.wrappedBuffer("{\"resp\":\"404 NOT FOUND\"}".getBytes("UTF-8"));
+                resp = Unpooled.wrappedBuffer("{\"resp\":\"404 未找到\"}".getBytes("UTF-8"));
                 return;
             }
 

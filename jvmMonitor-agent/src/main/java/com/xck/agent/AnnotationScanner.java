@@ -5,6 +5,7 @@ import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.util.ClassUtil;
 import cn.hutool.core.util.StrUtil;
 import com.xck.agent.controller.ServerController;
+import com.xck.agent.netty.NettyServer;
 import com.xck.agent.util.PluginClassLoader;
 import com.xck.annotation.RequestMapping;
 
@@ -28,9 +29,10 @@ public class AnnotationScanner {
     //外部插件
     public static Map<String, ObjExecutor> controllerMap = new HashMap<>();
 
+    public static NettyServer nettyServer;
+
     /**
      * 注解扫描
-     *
      */
     public static void scan() throws Exception {
         scanOriginPlugin();
@@ -43,10 +45,10 @@ public class AnnotationScanner {
     }
 
     /**
-     * @RequestMapping注解扫描注册到controllerMap
      * @throws Exception
+     * @RequestMapping注解扫描注册到controllerMap
      */
-    public static void scanPlugin(String scanPath) throws Exception{
+    public static void scanPlugin(String scanPath) throws Exception {
         System.out.println("扫描插件: " + scanPath);
 
         Map<String, ObjExecutor> newPluginMap = new HashMap<>();
@@ -58,7 +60,7 @@ public class AnnotationScanner {
 
         File[] files = FileUtil.ls(scanPath);
         URL[] urls = new URL[files.length];
-        for (int i=0; i<files.length; i++) {
+        for (int i = 0; i < files.length; i++) {
             urls[i] = new URL("file:" + files[i].getPath());
         }
         PluginClassLoader pluginClassLoader = new PluginClassLoader(urls);
@@ -92,6 +94,28 @@ public class AnnotationScanner {
             newPluginMap.put(basePath + methodPath, new ObjExecutor(instance, method));
             System.out.println("注册接口: " + (basePath + methodPath));
         }
+    }
+
+    /**
+     * 控制服务端启停
+     * @param port 服务端监听端口
+     * @param status 1-关闭不启动，2-重启
+     * @return
+     */
+    public static boolean scanServer(int port, int status) {
+        if (nettyServer != null) {
+            nettyServer.shutdown();
+            nettyServer = null;
+        }
+
+        if (status == 2) {
+            nettyServer = new NettyServer(port);
+            nettyServer.start();
+            if (!nettyServer.isRunning()) {
+                return false;
+            }
+        }
+        return true;
     }
 
     /**

@@ -22,11 +22,16 @@ public class NettyServer extends Thread {
 
     private ChannelFuture channelFuture;
 
+    private volatile boolean isRunning;
+
+    private int port;
+
+    public NettyServer(int port) {
+        this.port = port;
+    }
+
     @Override
     public void run() {
-        System.out.println("寻找可用端口...");
-
-
 
         System.out.println("启动服务端");
         EventLoopGroup bossGroup = new NioEventLoopGroup(2);
@@ -40,7 +45,7 @@ public class NettyServer extends Thread {
                         @Override
                         protected void initChannel(SocketChannel socketChannel) throws Exception {
                             socketChannel.pipeline().addLast(new HttpServerCodec());
-                            socketChannel.pipeline().addLast("httpAggregator", new HttpObjectAggregator(512 * 1024));
+                            socketChannel.pipeline().addLast(new HttpObjectAggregator(512 * 1024));
                             socketChannel.pipeline().addLast(new HttpServerHandler());
                         }
                     });
@@ -50,24 +55,31 @@ public class NettyServer extends Thread {
                         @Override
                         public void operationComplete(Future<? super Void> future) throws Exception {
                             if (future.isSuccess()) {
-                                System.out.println("启动服务端成功");
+                                System.out.println("启动服务端成功, 端口: " + port);
                             }
                         }
                     }).sync();
+            isRunning = true;
 
             channelFuture.channel().closeFuture().sync();
-            System.out.println("关闭服务端成功");
+            System.out.println("关闭服务端成功, 端口: " + port);
         } catch (Throwable e) {
             e.printStackTrace();
         } finally {
             workGroup.shutdownGracefully();
             bossGroup.shutdownGracefully();
+            isRunning = false;
         }
     }
 
+    public boolean isRunning() {
+        return isRunning;
+    }
+
     public void shutdown() {
-        if (channelFuture != null) {
+        if (isRunning && channelFuture != null) {
             channelFuture.channel().close();
+            isRunning = false;
         }
     }
 }

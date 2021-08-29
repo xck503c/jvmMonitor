@@ -1,7 +1,5 @@
 package com.xck.agent;
 
-import com.xck.agent.netty.NettyServer;
-
 import java.lang.instrument.Instrumentation;
 
 /**
@@ -13,15 +11,11 @@ import java.lang.instrument.Instrumentation;
 public class MonitorAgent {
 
     public static void agentmain(String agentArgs, Instrumentation inst) {
-        NettyServer nettyServer = null;
         try {
             System.out.println("attach start");
-            nettyServer = new NettyServer();
-            nettyServer.start();
             AnnotationScanner.scan();
         } catch (Throwable e) {
             e.printStackTrace();
-            nettyServer.shutdown();
         }
     }
 }
