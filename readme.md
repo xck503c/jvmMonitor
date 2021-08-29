@@ -32,7 +32,7 @@
         try {
             System.out.println("接收请求: " + reqJson);
             //获取spring上下文
-            Object apx = ClassAgentUtil.methodStaticInvoke("com.hskj.spring.Spring", "getApx");
+            Object apx = ClassAgentUtil.methodStaticInvoke("com.xck.spring.Spring", "getApx");
             Object loginService = ClassAgentUtil.methodObjInvoke(apx, "getBean", "loginService");
 
             JSONObject jsonObject = new JSONObject(reqJson);
