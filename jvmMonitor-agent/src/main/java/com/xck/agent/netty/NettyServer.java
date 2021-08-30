@@ -1,5 +1,6 @@
 package com.xck.agent.netty;
 
+import com.xck.util.LogUtil;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
@@ -26,6 +27,10 @@ public class NettyServer extends Thread {
 
     private int port;
 
+    public NettyServer() {
+        this.port = 8666;
+    }
+
     public NettyServer(int port) {
         this.port = port;
     }
@@ -33,7 +38,8 @@ public class NettyServer extends Thread {
     @Override
     public void run() {
 
-        System.out.println("启动服务端");
+        LogUtil.info("开始启动服务端");
+        isRunning = true;
         EventLoopGroup bossGroup = new NioEventLoopGroup(2);
         EventLoopGroup workGroup = new NioEventLoopGroup(Runtime.getRuntime().availableProcessors() * 2);
         try {
@@ -50,21 +56,20 @@ public class NettyServer extends Thread {
                         }
                     });
 
-            channelFuture = serverBootstrap.bind(8666)
+            channelFuture = serverBootstrap.bind(port)
                     .addListener(new GenericFutureListener<Future<? super Void>>() {
                         @Override
                         public void operationComplete(Future<? super Void> future) throws Exception {
                             if (future.isSuccess()) {
-                                System.out.println("启动服务端成功, 端口: " + port);
+                                LogUtil.info("启动服务端成功, 端口: " + port);
                             }
                         }
                     }).sync();
-            isRunning = true;
 
             channelFuture.channel().closeFuture().sync();
-            System.out.println("关闭服务端成功, 端口: " + port);
+            LogUtil.info("关闭服务端成功, 端口: " + port);
         } catch (Throwable e) {
-            e.printStackTrace();
+            LogUtil.error("服务端异常, 端口: " + port + ", errMsg: " + e);
         } finally {
             workGroup.shutdownGracefully();
             bossGroup.shutdownGracefully();
@@ -76,10 +81,14 @@ public class NettyServer extends Thread {
         return isRunning;
     }
 
-    public void shutdown() {
+    public void shutdown() throws InterruptedException{
+        LogUtil.info("准备关闭服务端，服务端运行状态: " + isRunning);
         if (isRunning && channelFuture != null) {
             channelFuture.channel().close();
-            isRunning = false;
+        }
+        while (isRunning) {
+            LogUtil.info("等待服务端关闭, 1s...");
+            Thread.sleep(1000);
         }
     }
 }

@@ -27,16 +27,10 @@ public class ServerController {
      * @number 1
      */
     @RequestMapping("/plugin/reload")
-    public String reloadPlugin(String json){
-        try {
-            JSONObject jsonObject = new JSONObject(json);
-            AnnotationScanner.scanPlugin(jsonObject.getStr("path"));
-            return "{\"resp\":\"ok\"}";
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        return "{\"resp\":\"error\"}";
+    public String reloadPlugin(String json) throws Exception{
+        JSONObject jsonObject = new JSONObject(json);
+        AnnotationScanner.scanPlugin(jsonObject.getStr("path"));
+        return "{\"resp\":\"ok\"}";
     }
 
     /**
@@ -54,17 +48,11 @@ public class ServerController {
      * @number 5
      */
     @RequestMapping("/httpServer/restart")
-    public String reStartServer(String json){
-        try {
-            JSONObject jsonObject = new JSONObject(json);
-            int port = jsonObject.getInt("port");
-            int status = jsonObject.getInt("status");
-            boolean result = AnnotationScanner.scanServer(port, status);
-            return String.format("{\"resp\":\"restart server %s\"}", result);
-        } catch (Throwable e) {
-            e.printStackTrace();
-        }
-
-        return "{\"resp\":\"error\"}";
+    public String reStartServer(String json) throws InterruptedException{
+        JSONObject jsonObject = new JSONObject(json);
+        int port = jsonObject.getInt("port");
+        int status = jsonObject.getInt("status");
+        boolean result = AnnotationScanner.scanServer(port, status);
+        return String.format("{\"resp\":\"restart server %s\"}", result);
     }
 }

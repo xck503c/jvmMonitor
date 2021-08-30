@@ -1,5 +1,6 @@
 package com.xck.boot;
 
+import cn.hutool.json.JSONObject;
 import com.sun.tools.attach.VirtualMachine;
 
 /**
@@ -14,7 +15,11 @@ public class BootStrap {
         String agentPath = System.getProperty("user.dir")
                 + "/jvmMonitor-agent-V1.0.0-jar-with-dependencies.jar";
         VirtualMachine vm = VirtualMachine.attach(args[0]);
-        vm.loadAgent(agentPath);
+
+        JSONObject configJson = new JSONObject();
+        configJson.put("homePath", System.getProperty("user.dir"));
+        configJson.put("serverPort", Integer.parseInt(args[1]));
+        vm.loadAgent(agentPath, configJson.toJSONString(0));
         vm.detach();
     }
 }

@@ -8,6 +8,7 @@ import com.xck.agent.controller.ServerController;
 import com.xck.agent.netty.NettyServer;
 import com.xck.agent.util.PluginClassLoader;
 import com.xck.annotation.RequestMapping;
+import com.xck.util.LogUtil;
 
 import java.io.File;
 import java.lang.reflect.Method;
@@ -49,12 +50,12 @@ public class AnnotationScanner {
      * @RequestMapping注解扫描注册到controllerMap
      */
     public static void scanPlugin(String scanPath) throws Exception {
-        System.out.println("扫描插件: " + scanPath);
+        LogUtil.info("扫描插件: " + scanPath);
 
         Map<String, ObjExecutor> newPluginMap = new HashMap<>();
 
         if (!FileUtil.exist(scanPath)) {
-            System.out.println("未扫描到插件");
+            LogUtil.info("未扫描到插件");
             return;
         }
 
@@ -92,7 +93,7 @@ public class AnnotationScanner {
 
             Object instance = clzz.newInstance();
             newPluginMap.put(basePath + methodPath, new ObjExecutor(instance, method));
-            System.out.println("注册接口: " + (basePath + methodPath));
+            LogUtil.info("注册接口: " + (basePath + methodPath));
         }
     }
 
@@ -102,18 +103,14 @@ public class AnnotationScanner {
      * @param status 1-关闭不启动，2-重启
      * @return
      */
-    public static boolean scanServer(int port, int status) {
-        if (nettyServer != null) {
+    public static boolean scanServer(int port, int status) throws InterruptedException{
+        if (nettyServer != null && nettyServer.isRunning()) {
             nettyServer.shutdown();
-            nettyServer = null;
         }
 
-        if (status == 2) {
+        if ((nettyServer == null || !nettyServer.isRunning()) && status == 2) {
             nettyServer = new NettyServer(port);
             nettyServer.start();
-            if (!nettyServer.isRunning()) {
-                return false;
-            }
         }
         return true;
     }
