@@ -11,6 +11,7 @@
         <module>jvmMonitor-agent</module>
         <module>jvmMonitor-boot</module>
         <module>jvmMonitor-common</module>
+        <module>jvmMonitor-terminal</module>
     </modules>
 
     <build>

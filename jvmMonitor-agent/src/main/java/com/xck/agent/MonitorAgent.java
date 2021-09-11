@@ -2,7 +2,10 @@ package com.xck.agent;
 
 import cn.hutool.json.JSONObject;
 import com.xck.SysConstants;
-import com.xck.agent.netty.NettyServer;
+import com.xck.agent.controller.ServerController;
+import com.xck.agent.netty.ClientService;
+import com.xck.annotation.AnnotationScanner;
+import com.xck.util.LogUtil;
 
 import java.lang.instrument.Instrumentation;
 
@@ -18,8 +21,9 @@ public class MonitorAgent {
         try {
             JSONObject configJson = new JSONObject(agentArgs);
             SysConstants.setHomePath(configJson.getStr("homePath"));
-            AnnotationScanner.scanServer(configJson.getInt("serverPort"), 2);
-            AnnotationScanner.scan();
+            LogUtil.info("attach start, args: " + agentArgs);
+            ClientService.client(configJson.getInt("serverPort"));
+            AnnotationScanner.scanOriginPlugin(ServerController.class);
         } catch (Throwable e) {
             e.printStackTrace();
         }

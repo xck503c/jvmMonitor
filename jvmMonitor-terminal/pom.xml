@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>jvmMonitor</artifactId>
+        <groupId>com.xck</groupId>
+        <version>V1.0.0</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>jvmMonitor-terminal</artifactId>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.xck</groupId>
+            <artifactId>jvmMonitor-common</artifactId>
+            <version>V1.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-all</artifactId>
+            <version>4.1.33.Final</version>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>3.0.2</version>
+                <configuration>
+                    <archive>
+                        <!-- 生成的jar中，不要包含pom.xml和pom.properties这两个文件 -->
+                        <addMavenDescriptor>true</addMavenDescriptor>
+                        <manifest>
+                            <!-- 是否要把第三方jar放到manifest的classpath中 -->
+                            <addClasspath>true</addClasspath>
+                            <!-- 生成的manifest中classpath的前缀，填写依赖jar包相对于项目jar包的路径-->
+
+                            <classpathPrefix>./</classpathPrefix>
+                            <!-- 应用的main class -->
+                            <mainClass>com.xck.JvmMonitorTerminal</mainClass>
+                        </manifest>
+                    </archive>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>
