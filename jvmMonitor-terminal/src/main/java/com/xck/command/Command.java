@@ -16,7 +16,7 @@ import java.util.List;
 @Parameters(commandDescription = "命令格式: program -具体选项 选项所需的选项")
 public class Command {
 
-    @Parameter(names = {"-program"}, required = true, description = "-program sender|server|deal")
+    @Parameter(names = {"-program"}, required = true, description = "-program sender|receiver|dealer")
     public String program;
 
     @Parameter(names = {"-userCache"}, converter = UserCacheConvert.class, description = "-userCache userId;[service|sign|extInfo]")

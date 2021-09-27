@@ -54,7 +54,7 @@ public class ClientHandler extends ChannelInboundHandlerAdapter {
             if (packageLen > 0) {
                 content = byteBuf.readCharSequence(packageLen, Charset.forName("UTF-8")).toString();
             }
-            System.out.println("服务端收到, 命令类型:"+commandType + ", 包长度:"+packageLen
+            LogUtil.info("客户端收到, 命令类型:"+commandType + ", 包长度:"+packageLen
                     + ", content: " + content);
 
             String resp = (String)objExecutor.getMethod().invoke(objExecutor.getObject(), content);
@@ -62,6 +62,8 @@ public class ClientHandler extends ChannelInboundHandlerAdapter {
 
         } catch (IllegalArgumentException e) {
             LogUtil.error("client read error: " + e);
+        } catch (Throwable e) {
+            LogUtil.error("client error: " + e);
         } finally {
             ByteBuf resp = Unpooled.buffer();
             resp.writeInt(2);
@@ -83,7 +85,7 @@ public class ClientHandler extends ChannelInboundHandlerAdapter {
         LogUtil.info("客户端发送心跳检测...");
 
         ByteBuf byteBuf = Unpooled.buffer();
-        byteBuf.writeShort(2);
+        byteBuf.writeInt(3);
         byteBuf.writeInt(0);
 
         ctx.writeAndFlush(byteBuf);

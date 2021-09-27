@@ -10,16 +10,66 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>jvmMonitor-boot</artifactId>
+    <packaging>jar</packaging>
 
     <build>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.3</version>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>2.4</version>
                 <configuration>
-                    <source>1.7</source>
-                    <target>1.7</target>
+                    <archive>
+                        <manifest>                         <!--是否要把第三方jar放到manifest的classpath中-->
+                            <addClasspath>true</addClasspath>                         <!--生成的manifest中classpath的前缀，                          因为要把第三方jar放到lib目录下，                         所以classpath的前缀是lib/-->
+                            <classpathPrefix>lib/</classpathPrefix>                          <!-- 执行的主程序路径 -->
+                            <mainClass>com.xck.boot.BootStrap</mainClass>
+                        </manifest>
+                    </archive>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <version>3.0.1</version>
+                <executions>
+                    <execution>
+                        <id>copy</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>copy</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>copy-dependencies</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>copy-dependencies</goal>
+                        </goals>
+                        <configuration>
+                            <type>jar</type>
+                            <includeTypes>jar</includeTypes>
+                            <!-- 存放服务依赖的jar包，存放在服务相同目录的lib文件夹下 -->
+                            <outputDirectory>
+                                ${project.parent.build.directory}/jvmMonitor/lib
+                            </outputDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
+                <configuration>
+                    <artifactItems>
+                        <!-- copy agent jar to server reource lib -->
+                        <artifactItem>
+                            <groupId>${project.groupId}</groupId>
+                            <artifactId>${project.artifactId}</artifactId>
+                            <version>${project.version}</version>
+                            <type>${project.packaging}</type>
+                            <overWrite>true</overWrite>
+                            <outputDirectory>${project.parent.build.directory}/jvmMonitor/lib</outputDirectory>
+                            <destFileName>jvmMonitor-boot.jar</destFileName>
+                        </artifactItem>
+                    </artifactItems>
                 </configuration>
             </plugin>
         </plugins>

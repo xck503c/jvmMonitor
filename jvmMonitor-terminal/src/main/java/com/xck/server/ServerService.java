@@ -53,6 +53,9 @@ public class ServerService {
         if (command.userCache != null) {
             byteBuf.writeInt("/cache/user".hashCode());
             jsonObject.put("userId", command.userCache.getUserId());
+            if (StrUtil.isNotBlank(command.userCache.getOption())) {
+                jsonObject.put("option", command.userCache.getOption());
+            }
         }else if (StrUtil.isNotBlank(command.gateConfigName)) {
             byteBuf.writeInt("/cache/gateConfig".hashCode());
             jsonObject.put("name", command.gateConfigName);

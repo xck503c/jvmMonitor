@@ -42,8 +42,10 @@ public class ServerHandler extends ChannelInboundHandlerAdapter {
         if (packageLen > 0) {
             content = byteBuf.readCharSequence(packageLen, Charset.forName("UTF-8")).toString();
         }
-        System.out.println("服务端收到, 命令类型:"+commandType + ", 包长度:"+packageLen
-                + ", content: " + content);
+        if (commandType == 2) {
+            System.out.println("服务端收到, 命令类型:"+commandType + ", 包长度:"+packageLen
+                    + ", content: " + content);
+        }
         ServerService.lastTime = System.currentTimeMillis();
     }
 

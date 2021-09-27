@@ -41,7 +41,7 @@ public class ClientService {
             while (true) {
                 try {
                     AnnotationScanner.scanPlugin(SysConstants.homePath + "/plugin");
-                } catch (Exception e) {
+                } catch (Throwable e) {
                     LogUtil.error("scan plugin error " + e);
                 } finally {
                     try {

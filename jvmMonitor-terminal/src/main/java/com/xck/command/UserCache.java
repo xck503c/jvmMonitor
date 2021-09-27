@@ -9,6 +9,7 @@ package com.xck.command;
 public class UserCache {
 
     private String userId;
+    private String option;
 
     public String getUserId() {
         return userId;
@@ -16,5 +17,13 @@ public class UserCache {
 
     public void setUserId(String userId) {
         this.userId = userId;
+    }
+
+    public String getOption() {
+        return option;
+    }
+
+    public void setOption(String option) {
+        this.option = option;
     }
 }

@@ -46,11 +46,12 @@ public class JvmMonitorTerminal {
 
                 String os = System.getProperty("os.name");
                 String result = "";
+                String javaHome = System.getProperty("java.home") + "/../lib/tools.jar";
                 if (os.toLowerCase().startsWith("win")) {
-                    result = RuntimeUtil.execForStr("java -cp .;hutool-all-4.6.3.jar;jvmMonitor-boot-V1.0.0.jar;tools.jar com.xck.boot.BootStrap "
+                    result = RuntimeUtil.execForStr("java -Xbootclasspath/a:"+javaHome+" -cp .;hutool-all-4.6.3.jar;jvmMonitor-boot.jar; com.xck.boot.BootStrap "
                             + targetPid + " " + ServerService.nettyServer.getPort());
                 } else {
-                    result = RuntimeUtil.execForStr("nohup java -cp '.:hutool-all-4.6.3.jar:jvmMonitor-boot-V1.0.0.jar:tools.jar' com.xck.boot.BootStrap "
+                    result = RuntimeUtil.execForStr("nohup java -Xbootclasspath/a:"+javaHome+" -cp '.:hutool-all-4.6.3.jar:jvmMonitor-boot.jar:' com.xck.boot.BootStrap "
                             + targetPid + " " + ServerService.nettyServer.getPort() + " &");
                 }
 
