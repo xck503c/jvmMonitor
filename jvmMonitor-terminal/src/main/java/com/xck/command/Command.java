@@ -19,17 +19,15 @@ public class Command {
     @Parameter(names = {"-program"}, required = true, description = "-program sender|receiver|dealer")
     public String program;
 
-    @Parameter(names = {"-userCache"}, converter = UserCacheConvert.class, description = "-userCache userId;[service|sign|extInfo]")
+    @Parameter(names = {"-userCache"}, converter = UserCache.Convert.class, description = "-userCache userId;[base|service|groupService|multiService|multiGroupService|sign|extInfo]")
     public UserCache userCache;
+
+    @Parameter(names = {"-tdCache"}, converter = TdCache.Convert.class, description = "-tdCache tdCode;[base|sign|extInfo]")
+    public TdCache tdCache;
 
     @Parameter(names = {"-gateConfig"}, description = "-gateConfig keyName")
     public String gateConfigName;
 
     @Parameter(names = {"-blackIsHit"}, converter = BlackMobileIsHitConvert.class, description = "-blackIsHit userId;mobile")
     public BlackMobileIsHit blackMobileIsHit;
-
-    public static void main(String[] args) {
-        JCommander.newBuilder().addObject(new Command()).build().parse("-program", "a"
-                , "-userCache", "-fdsfd", "fff");
-    }
 }

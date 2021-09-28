@@ -61,7 +61,7 @@ public class NettyClient extends Thread {
             channelFuture.channel().closeFuture().sync();
             LogUtil.info("关闭客户端成功, 端口: " + port);
         } catch (Throwable e) {
-            LogUtil.error("客户端异常, 端口: " + port + ", errMsg: " + e);
+            LogUtil.error("客户端异常, 端口: " + port + ", errMsg: ", e);
         } finally {
             workerGroup.shutdownGracefully();
             isRunning = false;

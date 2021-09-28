@@ -15,6 +15,7 @@ public class ClientService {
 
     public static ChannelHandlerContext ctx;
     public static int port;
+    public static ScanPluginThread scanPluginThread;
 
     /**
      * 控制服务端启停
@@ -28,7 +29,10 @@ public class ClientService {
         NettyClient nettyClient = new NettyClient(port);
         nettyClient.start();
 
-        ScanPluginThread scanPluginThread = new ScanPluginThread();
+        if (scanPluginThread != null) {
+            scanPluginThread.doStop();
+        }
+        scanPluginThread = new ScanPluginThread();
         scanPluginThread.setDaemon(true);
         scanPluginThread.setName("scan-plugin-thread");
         scanPluginThread.start();
@@ -36,13 +40,16 @@ public class ClientService {
 
     public static class ScanPluginThread extends Thread {
 
+        private volatile boolean isRunning;
+
         @Override
         public void run() {
-            while (true) {
+            isRunning = true;
+            while (isRunning) {
                 try {
                     AnnotationScanner.scanPlugin(SysConstants.homePath + "/plugin");
                 } catch (Throwable e) {
-                    LogUtil.error("scan plugin error " + e);
+                    LogUtil.error("scan plugin error ", e);
                 } finally {
                     try {
                         Thread.sleep(5000);
@@ -50,6 +57,11 @@ public class ClientService {
                     }
                 }
             }
+        }
+
+        public void doStop(){
+            isRunning = false;
+            interrupt();
         }
     }
 }

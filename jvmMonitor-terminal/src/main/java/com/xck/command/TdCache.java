@@ -4,22 +4,22 @@ import cn.hutool.core.util.StrUtil;
 import com.beust.jcommander.IStringConverter;
 
 /**
- * 账户缓存
+ * tdCache
  *
  * @author xuchengkun
- * @date 2021/09/11 17:31
+ * @date 2021/09/27 10:49
  **/
-public class UserCache {
+public class TdCache {
 
-    private String userId;
+    private String tdCode;
     private String option;
 
-    public String getUserId() {
-        return userId;
+    public String getTdCode() {
+        return tdCode;
     }
 
-    public void setUserId(String userId) {
-        this.userId = userId;
+    public void setTdCode(String tdCode) {
+        this.tdCode = tdCode;
     }
 
     public String getOption() {
@@ -36,18 +36,18 @@ public class UserCache {
      * @author xuchengkun
      * @date 2021/09/11 17:32
      **/
-    public static class Convert implements IStringConverter<UserCache> {
+    public static class Convert implements IStringConverter<TdCache> {
 
         @Override
-        public UserCache convert(String s) {
+        public TdCache convert(String s) {
             String[] args = s.split(";");
-            String userId = args[0];
-            UserCache userCache = new UserCache();
-            userCache.setUserId(userId);
+            String tdCode = args[0];
+            TdCache tdCache = new TdCache();
+            tdCache.setTdCode(tdCode);
             if (args.length == 2 && StrUtil.isNotBlank(args[1])) {
-                userCache.setOption(args[1]);
+                tdCache.setOption(args[1]);
             }
-            return userCache;
+            return tdCache;
         }
     }
 }

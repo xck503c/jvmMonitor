@@ -27,8 +27,20 @@ public class LogUtil {
         log(log, "INFO");
     }
 
-    public static void error(String log) {
-        log(log, "ERROR");
+    public static void error(String log, Throwable e) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(e).append("\n");
+
+        for (StackTraceElement traceElement : e.getStackTrace()) {
+            sb.append("\tat " + traceElement).append("\n");
+        }
+
+
+        for (StackTraceElement traceElement : e.getCause().getStackTrace()) {
+            sb.append("\tat " + traceElement).append("\n");
+        }
+
+        log(log + sb.toString(), "ERROR");
     }
 
     public static void warn(String log) {

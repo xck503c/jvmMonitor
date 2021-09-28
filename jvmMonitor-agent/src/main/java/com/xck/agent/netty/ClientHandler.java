@@ -33,9 +33,10 @@ public class ClientHandler extends ChannelInboundHandlerAdapter {
 
         byte[] respContent = "{\"resp\":\"system error\"}".getBytes(Charset.forName("UTF-8"));
 
+        int commandType = -1;
         try {
             ByteBuf byteBuf = (ByteBuf) msg;
-            int commandType = byteBuf.readInt();
+            commandType = byteBuf.readInt();
             int packageLen = byteBuf.readInt();
             if (packageLen < 0) {
                 throw new IllegalArgumentException("服务端读取包长度错误: " + packageLen);
@@ -61,12 +62,12 @@ public class ClientHandler extends ChannelInboundHandlerAdapter {
             respContent = resp.getBytes(Charset.forName("UTF-8"));
 
         } catch (IllegalArgumentException e) {
-            LogUtil.error("client read error: " + e);
+            LogUtil.error("client read error: ", e);
         } catch (Throwable e) {
-            LogUtil.error("client error: " + e);
+            LogUtil.error("client error: ", e);
         } finally {
             ByteBuf resp = Unpooled.buffer();
-            resp.writeInt(2);
+            resp.writeInt(commandType);
             resp.writeInt(respContent.length);
             resp.writeBytes(respContent);
             ctx.writeAndFlush(resp);
@@ -75,7 +76,7 @@ public class ClientHandler extends ChannelInboundHandlerAdapter {
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
-        LogUtil.error("客户端系统错误: errMsg: " + cause);
+        LogUtil.error("客户端系统错误: errMsg: ", cause);
         ctx.close();
     }
 

@@ -42,7 +42,7 @@ public class ServerHandler extends ChannelInboundHandlerAdapter {
         if (packageLen > 0) {
             content = byteBuf.readCharSequence(packageLen, Charset.forName("UTF-8")).toString();
         }
-        if (commandType == 2) {
+        if (commandType != "/server/activeTest".hashCode()) {
             System.out.println("服务端收到, 命令类型:"+commandType + ", 包长度:"+packageLen
                     + ", content: " + content);
         }
@@ -51,7 +51,8 @@ public class ServerHandler extends ChannelInboundHandlerAdapter {
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
-        LogUtil.error("服务端系统错误: errMsg: " + cause);
+        System.out.println("客户端断开连接: errMsg: " + cause.getCause().getMessage());
+        LogUtil.error("客户端断开连接: errMsg: ", cause);
         ctx.close();
     }
 
