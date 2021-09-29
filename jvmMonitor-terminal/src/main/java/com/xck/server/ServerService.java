@@ -9,6 +9,7 @@ import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
 
 import java.nio.charset.Charset;
+import java.util.concurrent.SynchronousQueue;
 
 /**
  * 客户端服务类
@@ -18,6 +19,7 @@ import java.nio.charset.Charset;
  **/
 public class ServerService {
 
+    public static SynchronousQueue<String> commandRespSQ = new SynchronousQueue<>();
     public static NettyServer nettyServer;
     public static ChannelHandlerContext ctx;
     public static long lastTime;

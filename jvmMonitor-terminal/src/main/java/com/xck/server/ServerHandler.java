@@ -18,7 +18,6 @@ public class ServerHandler extends ChannelInboundHandlerAdapter {
 
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
-        System.out.println("客户端启动成功");
         ServerService.ctx = ctx;
         ServerService.lastTime = System.currentTimeMillis();
     }
@@ -43,6 +42,7 @@ public class ServerHandler extends ChannelInboundHandlerAdapter {
             content = byteBuf.readCharSequence(packageLen, Charset.forName("UTF-8")).toString();
         }
         if (commandType != "/server/activeTest".hashCode()) {
+            ServerService.commandRespSQ.offer("1");
             System.out.println("服务端收到, 命令类型:"+commandType + ", 包长度:"+packageLen
                     + ", content: " + content);
         }

@@ -6,11 +6,10 @@ import com.beust.jcommander.ParameterException;
 import com.xck.command.Command;
 import com.xck.server.NettyServer;
 import com.xck.server.ServerService;
-import io.netty.buffer.ByteBuf;
-import io.netty.buffer.Unpooled;
+import jline.console.ConsoleReader;
+import jline.console.completer.AggregateCompleter;
 
 import java.util.List;
-import java.util.Scanner;
 
 /**
  * 交互终端
@@ -20,7 +19,7 @@ import java.util.Scanner;
  **/
 public class JvmMonitorTerminal {
 
-    public static void main(String[] args) throws Exception{
+    public static void main(String[] args) throws Exception {
 
         SysConstants.setHomePath(System.getProperty("user.dir"));
 
@@ -31,14 +30,21 @@ public class JvmMonitorTerminal {
             System.out.println((i + 1) + ". " + jpsList.get(i));
         }
 
-        Scanner scanner = new Scanner(System.in);
+
+        AggregateCompleter monitorCompleter = new AggregateCompleter(Command.getCompleter());
+        ConsoleReader lineReader = new ConsoleReader();
+        lineReader.addCompleter(monitorCompleter);
+
+        String prompt = "monitor> ";
+
         int targetPid = -1;
         while (true) {
-            System.out.print("请选择序号: ");
-            String line = scanner.nextLine();
+            System.out.println("请选择序号: ");
+            String line = null;
             try {
+                line = lineReader.readLine(prompt);
                 int order = Integer.parseInt(line);
-                targetPid = Integer.parseInt(jpsList.get(order-1).split(" ")[0]);
+                targetPid = Integer.parseInt(jpsList.get(order - 1).split(" ")[0]);
 
                 ServerService.nettyServer = new NettyServer();
                 ServerService.nettyServer.start();
@@ -48,10 +54,10 @@ public class JvmMonitorTerminal {
                 String result = "";
                 String javaHome = System.getProperty("java.home") + "/../lib/tools.jar";
                 if (os.toLowerCase().startsWith("win")) {
-                    result = RuntimeUtil.execForStr("java -Xbootclasspath/a:"+javaHome+" -cp .;hutool-all-4.6.3.jar;jvmMonitor-boot.jar; com.xck.boot.BootStrap "
+                    result = RuntimeUtil.execForStr("java -Xbootclasspath/a:" + javaHome + " -cp .;hutool-all-4.6.3.jar;jvmMonitor-boot.jar; com.xck.boot.BootStrap "
                             + targetPid + " " + ServerService.nettyServer.getPort());
                 } else {
-                    result = RuntimeUtil.execForStr("nohup java -Xbootclasspath/a:"+javaHome+" -cp '.:hutool-all-4.6.3.jar:jvmMonitor-boot.jar:' com.xck.boot.BootStrap "
+                    result = RuntimeUtil.execForStr("nohup java -Xbootclasspath/a:" + javaHome + " -cp '.:hutool-all-4.6.3.jar:jvmMonitor-boot.jar:' com.xck.boot.BootStrap "
                             + targetPid + " " + ServerService.nettyServer.getPort() + " &");
                 }
 
@@ -62,26 +68,25 @@ public class JvmMonitorTerminal {
                     System.out.println("启动失败: " + result);
                 }
             } catch (NumberFormatException e) {
-                System.out.print("选择参数非法！");
-                System.out.print("请选择序号: ");
+                System.out.println("选择参数非法！");
+                System.out.println("请选择序号: ");
             } catch (Throwable e) {
                 e.printStackTrace();
             }
         }
 
         while (true) {
-            String line = scanner.nextLine();
+            String line = null;
             try {
+                line = lineReader.readLine(prompt);
                 if ("help".equals(line)) {
                     JCommander.newBuilder().addObject(new Command()).build().usage();
-                }else {
-                    System.out.println("echo: " + line);
+                } else {
                     Command command = new Command();
                     JCommander.newBuilder().addObject(command).build().parse(line.split(" "));
                     ServerService.writeCommand(command);
+                    ServerService.commandRespSQ.take();
                 }
-            } catch (NumberFormatException e) {
-                System.out.print("请选择序号: ");
             } catch (ParameterException e) {
                 System.err.println("参数非法: " + e);
             } catch (Exception e) {
