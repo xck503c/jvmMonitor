@@ -4,6 +4,8 @@ import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.io.FileUtil;
 import com.xck.SysConstants;
 
+import java.io.FileNotFoundException;
+import java.io.PrintWriter;
 import java.util.Date;
 
 /**
@@ -23,24 +25,23 @@ public class LogUtil {
                 , SysConstants.homePath + "/" + logFileName);
     }
 
+    public static synchronized void error(String log, String level, Throwable e) {
+        String threadName = Thread.currentThread().getName();
+        String curData = DateUtil.format(new Date(), "yyyy-MM-dd HH:mm:ss,SSS");
+        FileUtil.appendUtf8String(String.format("%s [%s] %s - %s\n", curData, threadName, level, log)
+                , SysConstants.homePath + "/" + logFileName);
+        try {
+            e.printStackTrace(new PrintWriter(logFileName));
+        } catch (FileNotFoundException e1) {
+        }
+    }
+
     public static void info(String log) {
         log(log, "INFO");
     }
 
     public static void error(String log, Throwable e) {
-        StringBuilder sb = new StringBuilder();
-        sb.append(e).append("\n");
-
-        for (StackTraceElement traceElement : e.getStackTrace()) {
-            sb.append("\tat " + traceElement).append("\n");
-        }
-
-
-        for (StackTraceElement traceElement : e.getCause().getStackTrace()) {
-            sb.append("\tat " + traceElement).append("\n");
-        }
-
-        log(log + sb.toString(), "ERROR");
+        error(log, "ERROR", e);
     }
 
     public static void warn(String log) {

@@ -28,8 +28,17 @@ public class Command {
     @Parameter(names = {"-gateConfig"}, description = "-gateConfig keyName")
     public String gateConfigName;
 
-    @Parameter(names = {"-blackIsHit"}, converter = BlackMobileIsHitConvert.class, description = "-blackIsHit userId;mobile")
-    public BlackMobileIsHit blackMobileIsHit;
+    @Parameter(names = {"-blackIsHit"}, converter = UserMobileConvert.class, description = "-blackIsHit userId;mobile")
+    public UserMobile blackMobileIsHit;
+
+    @Parameter(names = {"-netSwitch"}, description = "-netSwitch mobile")
+    public String netSwitch;
+
+    @Parameter(names = {"-sendTd"}, converter = UserMobileConvert.class, description = "-sendTd userId;mobile")
+    public UserMobile sendTd;
+
+    @Parameter(names = {"-location"}, description = "-location mobile")
+    public String location;
 
     public static List<Completer> getCompleter() {
         List<Completer> list = new ArrayList<>();
@@ -39,6 +48,19 @@ public class Command {
         list.add(new EndsCompleter("-tdCache"));
         list.add(new EndsCompleter("-gateConfig"));
         list.add(new EndsCompleter("-blackIsHit"));
+        list.add(new EndsCompleter("-netSwitch"));
+        list.add(new EndsCompleter("-sendTd"));
+        list.add(new EndsCompleter("-location"));
+        list.add(new EndsCompleter("sender"));
+        list.add(new EndsCompleter("receiver"));
+        list.add(new EndsCompleter("dealer"));
+        list.add(new EndsCompleter("base"));
+        list.add(new EndsCompleter("service"));
+        list.add(new EndsCompleter("groupService"));
+        list.add(new EndsCompleter("multiService"));
+        list.add(new EndsCompleter("multiGroupService"));
+        list.add(new EndsCompleter("sign"));
+        list.add(new EndsCompleter("extInfo"));
         return list;
     }
 

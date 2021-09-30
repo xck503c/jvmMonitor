@@ -3,7 +3,6 @@ package com.xck.server;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONObject;
 import com.xck.command.Command;
-import com.xck.util.LogUtil;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
@@ -69,6 +68,16 @@ public class ServerService {
             byteBuf.writeInt("/cache/td".hashCode());
             jsonObject.put("tdCode", command.tdCache.getTdCode());
             jsonObject.put("option", command.tdCache.getOption());
+        } else if (command.netSwitch != null) {
+            byteBuf.writeInt("/netswitch/destType".hashCode());
+            jsonObject.put("mobile", command.netSwitch);
+        } else if (command.sendTd != null) {
+            byteBuf.writeInt("/black/td".hashCode());
+            jsonObject.put("userId", command.sendTd.getUserId());
+            jsonObject.put("mobile", command.sendTd.getMobile());
+        } else if (command.location != null) {
+            byteBuf.writeInt("/cache/location".hashCode());
+            jsonObject.put("mobile", command.location);
         }
 
         byte[] tmp = jsonObject.toJSONString(0).getBytes(Charset.forName("UTF-8"));

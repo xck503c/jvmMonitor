@@ -6,7 +6,7 @@ package com.xck.command;
  * @author xuchengkun
  * @date 2021/09/11 18:01
  **/
-public class BlackMobileIsHit {
+public class UserMobile {
 
     private String userId;
 
