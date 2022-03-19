@@ -24,56 +24,12 @@ public class AnnotationScanner {
 
     //内置插件
     public static Map<Integer, ObjExecutor> originPluginMap = new HashMap<>();
-    //外部插件
-    public static Map<Integer, ObjExecutor> controllerMap = new HashMap<>();
 
-
-    /**
-     * 注解扫描
-     */
-    public static void scan() throws Exception {
-
-    }
 
     public static void scanOriginPlugin(Class clzz) throws InstantiationException, IllegalAccessException {
         Map<Integer, ObjExecutor> neworiginPluginMap = new HashMap<>();
         scanController(clzz, neworiginPluginMap);
         originPluginMap = neworiginPluginMap;
-    }
-
-    /**
-     * @throws Exception
-     * @RequestMapping注解扫描注册到controllerMap
-     */
-    public static void scanPlugin(String scanPath) throws Exception {
-        LogUtil.info("扫描插件: " + scanPath);
-
-        Map<Integer, ObjExecutor> newPluginMap = new HashMap<>();
-
-        if (!FileUtil.exist(scanPath)) {
-            LogUtil.info("未扫描到插件");
-            return;
-        }
-
-        File[] files = FileUtil.ls(scanPath);
-        URL[] urls = new URL[files.length];
-        for (int i = 0; i < files.length; i++) {
-            urls[i] = new URL("file:" + files[i].getPath());
-        }
-        PluginClassLoader pluginClassLoader = new PluginClassLoader(urls);
-        Thread.currentThread().setContextClassLoader(pluginClassLoader);
-
-        //扫描对应的类
-        Set<Class<?>> requests = ClassUtil.scanPackageByAnnotation("com", RequestMapping.class);
-
-        for (Class<?> clzz : requests) {
-            scanController(clzz, newPluginMap);
-        }
-
-        pluginClassLoader.close();
-        Thread.currentThread().setContextClassLoader(null);
-
-        controllerMap = newPluginMap;
     }
 
     private static void scanController(Class<?> clzz, Map<Integer, ObjExecutor> newPluginMap)

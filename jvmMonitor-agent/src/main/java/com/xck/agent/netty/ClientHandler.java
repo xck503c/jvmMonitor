@@ -44,9 +44,6 @@ public class ClientHandler extends ChannelInboundHandlerAdapter {
 
             AnnotationScanner.ObjExecutor objExecutor = AnnotationScanner.originPluginMap.get(commandType);
             if (objExecutor == null) {
-                objExecutor = AnnotationScanner.controllerMap.get(commandType);
-            }
-            if (objExecutor == null) {
                 respContent = "{\"resp\":\"404 no found\"}".getBytes(Charset.forName("UTF-8"));
                 return;
             }

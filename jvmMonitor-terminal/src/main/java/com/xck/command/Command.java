@@ -16,51 +16,13 @@ import java.util.*;
 @Parameters(commandDescription = "命令格式: program -具体选项 选项所需的选项")
 public class Command {
 
-    @Parameter(names = {"-program"}, required = true, description = "-program sender|receiver|dealer")
-    public String program;
-
-    @Parameter(names = {"-userCache"}, converter = UserCache.Convert.class, description = "-userCache userId;[base|service|groupService|multiService|multiGroupService|sign|extInfo]")
-    public UserCache userCache;
-
-    @Parameter(names = {"-tdCache"}, converter = TdCache.Convert.class, description = "-tdCache tdCode;[base|sign|extInfo]")
-    public TdCache tdCache;
-
-    @Parameter(names = {"-gateConfig"}, description = "-gateConfig keyName")
-    public String gateConfigName;
-
-    @Parameter(names = {"-blackIsHit"}, converter = UserMobileConvert.class, description = "-blackIsHit userId;mobile")
-    public UserMobile blackMobileIsHit;
-
-    @Parameter(names = {"-netSwitch"}, description = "-netSwitch mobile")
-    public String netSwitch;
-
-    @Parameter(names = {"-sendTd"}, converter = UserMobileConvert.class, description = "-sendTd userId;mobile")
-    public UserMobile sendTd;
-
-    @Parameter(names = {"-location"}, description = "-location mobile")
-    public String location;
+    @Parameter(names = {"-staticMethod"}, converter = StaticMethod.Convert.class, description = "-static com.xck.Test#methodName#args1#args2")
+    public StaticMethod staticMethod;
 
     public static List<Completer> getCompleter() {
         List<Completer> list = new ArrayList<>();
         list.add(new EndsCompleter("help"));
-        list.add(new EndsCompleter("-program"));
-        list.add(new EndsCompleter("-userCache"));
-        list.add(new EndsCompleter("-tdCache"));
-        list.add(new EndsCompleter("-gateConfig"));
-        list.add(new EndsCompleter("-blackIsHit"));
-        list.add(new EndsCompleter("-netSwitch"));
-        list.add(new EndsCompleter("-sendTd"));
-        list.add(new EndsCompleter("-location"));
-        list.add(new EndsCompleter("sender"));
-        list.add(new EndsCompleter("receiver"));
-        list.add(new EndsCompleter("dealer"));
-        list.add(new EndsCompleter("base"));
-        list.add(new EndsCompleter("service"));
-        list.add(new EndsCompleter("groupService"));
-        list.add(new EndsCompleter("multiService"));
-        list.add(new EndsCompleter("multiGroupService"));
-        list.add(new EndsCompleter("sign"));
-        list.add(new EndsCompleter("extInfo"));
+        list.add(new EndsCompleter("-staticMethod"));
         return list;
     }
 

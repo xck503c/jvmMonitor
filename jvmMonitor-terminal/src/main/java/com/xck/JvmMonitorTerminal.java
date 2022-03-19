@@ -43,6 +43,11 @@ public class JvmMonitorTerminal {
             String line = null;
             try {
                 line = lineReader.readLine(prompt);
+                if ("quit".equals(line)) {
+                    System.out.println("退出");
+                    System.exit(0);
+                }
+
                 int order = Integer.parseInt(line);
                 targetPid = Integer.parseInt(jpsList.get(order - 1).split(" ")[0]);
 
@@ -53,23 +58,33 @@ public class JvmMonitorTerminal {
                 String os = System.getProperty("os.name");
                 String result = "";
                 String javaHome = System.getProperty("java.home") + "/../lib/tools.jar";
+                if (javaHome.contains(" ")) {
+                    String[] paths = javaHome.split(" ");
+                    StringBuilder sb = new StringBuilder();
+                    for (int i = 0; i < paths.length; i++) {
+                        sb.append(paths[i]);
+                        if (i != paths.length - 1) {
+                            sb.append("\" \"");
+                        }
+                    }
+                    javaHome = sb.toString();
+                }
                 if (os.toLowerCase().startsWith("win")) {
-                    result = RuntimeUtil.execForStr("java -Xbootclasspath/a:" + javaHome + " -cp .;hutool-all-4.6.3.jar;jvmMonitor-boot.jar; com.xck.boot.BootStrap "
+                    result = RuntimeUtil.execForStr("java -Xbootclasspath/a:" + javaHome + " -cp .;./* com.xck.boot.BootStrap "
                             + targetPid + " " + ServerService.nettyServer.getPort());
                 } else {
                     result = RuntimeUtil.execForStr("nohup java -Xbootclasspath/a:" + javaHome + " -cp '.:hutool-all-4.6.3.jar:jvmMonitor-boot.jar:' com.xck.boot.BootStrap "
                             + targetPid + " " + ServerService.nettyServer.getPort() + " &");
                 }
 
-                if (!result.contains("错误") && !result.contains("Exception")) {
-                    System.out.println("启动成功");
+                if (!result.contains("错误") && !result.contains("Exception") && !result.contains("Error")) {
+                    System.out.println("启动成功, " + result);
                     break;
                 } else {
                     System.out.println("启动失败: " + result);
                 }
             } catch (NumberFormatException e) {
                 System.out.println("选择参数非法！");
-                System.out.println("请选择序号: ");
             } catch (Throwable e) {
                 e.printStackTrace();
             }
@@ -81,7 +96,10 @@ public class JvmMonitorTerminal {
                 line = lineReader.readLine(prompt);
                 if ("help".equals(line)) {
                     JCommander.newBuilder().addObject(new Command()).build().usage();
-                } else {
+                } else if ("quit".equals(line)) {
+                    System.out.println("退出");
+                    System.exit(0);
+                }else{
                     Command command = new Command();
                     JCommander.newBuilder().addObject(command).build().parse(line.split(" "));
                     ServerService.writeCommand(command);
@@ -89,9 +107,8 @@ public class JvmMonitorTerminal {
                 }
             } catch (ParameterException e) {
                 System.err.println("参数非法: " + e);
-            } catch (Exception e) {
+            } catch (Throwable e) {
                 e.printStackTrace();
-                break;
             }
         }
     }

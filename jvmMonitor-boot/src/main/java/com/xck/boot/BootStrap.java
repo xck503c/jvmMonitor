@@ -21,5 +21,6 @@ public class BootStrap {
         configJson.put("serverPort", Integer.parseInt(args[1]));
         vm.loadAgent(agentPath, configJson.toJSONString(0));
         vm.detach();
+
     }
 }

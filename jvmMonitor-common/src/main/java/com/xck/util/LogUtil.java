@@ -31,7 +31,10 @@ public class LogUtil {
         FileUtil.appendUtf8String(String.format("%s [%s] %s - %s\n", curData, threadName, level, log)
                 , SysConstants.homePath + "/" + logFileName);
         try {
-            e.printStackTrace(new PrintWriter(logFileName));
+            PrintWriter printWriter = new PrintWriter(logFileName);
+            e.printStackTrace(printWriter);
+            printWriter.flush(); //这里需要flush，不然内容会留在缓冲区里面
+            printWriter.close();
         } catch (FileNotFoundException e1) {
         }
     }

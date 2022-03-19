@@ -25,6 +25,14 @@
             <version>1.72</version>
         </dependency>
 
+        <!-- ognl -->
+        <dependency>
+            <groupId>ognl</groupId>
+            <artifactId>ognl</artifactId>
+            <version>3.2.1</version>
+        </dependency>
+
+
     </dependencies>
 
     <build>
