@@ -1,8 +1,5 @@
 package com.xck.agent.netty;
 
-import com.xck.SysConstants;
-import com.xck.annotation.AnnotationScanner;
-import com.xck.util.LogUtil;
 import io.netty.channel.ChannelHandlerContext;
 
 /**

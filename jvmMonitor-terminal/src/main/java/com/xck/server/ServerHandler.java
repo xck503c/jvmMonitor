@@ -1,5 +1,9 @@
 package com.xck.server;
 
+import com.xck.command.PidCommand;
+import com.xck.command.TestCommand;
+import com.xck.model.JProcessonRegister;
+import com.xck.model.ServerService;
 import com.xck.util.LogUtil;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
@@ -18,13 +22,14 @@ public class ServerHandler extends ChannelInboundHandlerAdapter {
 
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
-        ServerService.ctx = ctx;
-        ServerService.lastTime = System.currentTimeMillis();
+        ServerService.writeCommand(ctx, PidCommand.pidCommandDefault, true);
+        System.out.println("获取pid");
     }
 
     @Override
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
-        ServerService.ctx = null;
+        boolean result = JProcessonRegister.deRegister(ctx);
+        System.out.println("断开成功？" + result);
     }
 
     @Override
@@ -41,12 +46,10 @@ public class ServerHandler extends ChannelInboundHandlerAdapter {
         if (packageLen > 0) {
             content = byteBuf.readCharSequence(packageLen, Charset.forName("UTF-8")).toString();
         }
-        if (commandType != "/server/activeTest".hashCode()) {
-            ServerService.commandRespSQ.offer("1");
-            System.out.println("服务端收到, 命令类型:"+commandType + ", 包长度:"+packageLen
-                    + ", content: " + content);
-        }
-        ServerService.lastTime = System.currentTimeMillis();
+
+        System.out.println("服务端收到, 命令类型:" + commandType + ", 包长度:" + packageLen
+                + ", content: " + content);
+        ServerService.readCommand(ctx, commandType, content);
     }
 
     @Override
@@ -60,11 +63,6 @@ public class ServerHandler extends ChannelInboundHandlerAdapter {
     public void userEventTriggered(ChannelHandlerContext ctx, Object evt) throws Exception {
 
         LogUtil.info("服务端发送心跳检测...");
-
-        ByteBuf byteBuf = Unpooled.buffer();
-        byteBuf.writeInt("/server/activeTest".hashCode());
-        byteBuf.writeInt(0);
-
-        ctx.writeAndFlush(byteBuf);
+        ServerService.writeCommand(ctx, TestCommand.testCommand, true);
     }
 }

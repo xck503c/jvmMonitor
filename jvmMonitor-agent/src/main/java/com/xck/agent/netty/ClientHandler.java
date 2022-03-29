@@ -58,9 +58,13 @@ public class ClientHandler extends ChannelInboundHandlerAdapter {
             String resp = (String)objExecutor.getMethod().invoke(objExecutor.getObject(), content);
             respContent = resp.getBytes(Charset.forName("UTF-8"));
 
+            LogUtil.info("客户端回复, 命令类型:"+commandType + ", 包长度:"+respContent.length
+                    + ", content: " + resp);
+
         } catch (IllegalArgumentException e) {
             LogUtil.error("client read error: ", e);
         } catch (Throwable e) {
+            e.printStackTrace();
             LogUtil.error("client error: ", e);
         } finally {
             ByteBuf resp = Unpooled.buffer();

@@ -30,7 +30,7 @@ public class NettyServer extends Thread {
 
     public NettyServer() {
         setDaemon(true);
-        setName("termail-server-thread");
+        setName("terminal-server-thread");
     }
 
     @Override
@@ -89,9 +89,12 @@ public class NettyServer extends Thread {
         }
     }
 
-    public int getPort() throws InterruptedException{
-        while (!isRunning || !isFinish) {
-            Thread.sleep(1000);
+    public int getPort(){
+        try {
+            while (!isRunning || !isFinish) {
+                Thread.sleep(1000);
+            }
+        } catch (InterruptedException e) {
         }
         return port;
     }

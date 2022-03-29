@@ -6,6 +6,8 @@ import com.xck.annotation.RequestMapping;
 import com.xck.util.ClassAgentUtil;
 import com.xck.util.LogUtil;
 
+import java.lang.management.ManagementFactory;
+
 /**
  * 服务端控制器
  *
@@ -16,12 +18,19 @@ import com.xck.util.LogUtil;
 public class ServerController {
 
     @RequestMapping("/activeTest")
-    public String activeTest(String json) throws Exception{
+    public String activeTest(String json) throws Exception {
         return "{\"resp\":\"ok\"}";
     }
 
+    @RequestMapping("/pid")
+    public String pid(String json) throws Exception{
+        String name = ManagementFactory.getRuntimeMXBean().getName();
+        String pid = name.split("@")[0];
+        return "{\"resp\":\"" + pid + "\"}";
+    }
+
     @RequestMapping("/staticMethod")
-    public String staticMethod(String json) throws Exception{
+    public String staticMethod(String json) throws Exception {
 
         JSONObject jsonObject = new JSONObject(json);
         String className = jsonObject.getStr("className");
@@ -34,7 +43,7 @@ public class ServerController {
             invokeResultStr = ClassAgentUtil.obj2Json(invokeResult);
 
             JSONObject result = new JSONObject();
-            result.put("result", invokeResultStr);
+            result.put("resp", invokeResultStr);
             return result.toJSONString(0);
         } catch (ClassNotFoundException e) {
             return "{\"resp\":\"class no found\"}";

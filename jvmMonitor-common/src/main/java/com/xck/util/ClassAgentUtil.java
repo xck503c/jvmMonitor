@@ -1,5 +1,6 @@
 package com.xck.util;
 
+import cn.hutool.core.util.ArrayUtil;
 import cn.hutool.core.util.ClassUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.json.JSONArray;
@@ -152,10 +153,10 @@ public class ClassAgentUtil {
         if (o == null) return "null";
 
         String result = "";
-        if (o instanceof Number || o instanceof CharSequence) {
+        if (o instanceof Number || o instanceof CharSequence || o instanceof Boolean) {
             result = o.toString();
         } else {
-            result = new JSONObject(o).toJSONString(0);
+            result = JSONUtil.toJsonStr(o);
         }
 
         return result;
@@ -163,16 +164,49 @@ public class ClassAgentUtil {
 
     public static Object json2Obj(String str, Class clzz) throws NoSuchFieldException {
         try {
+            //判断是否是json字符串
+            if (JSONUtil.isJson(str)) {
+                JSONObject tmp = JSONUtil.parseObj(str);
+                // 如果数量只有一个，而且又是基本类型，尝试按照基本类型处理
+                if (tmp.size() == 1) {
+                    for (String key : tmp.keySet()) {
+                        if (clzz == Object.class || clzz == String.class) {
+                            return tmp.getStr(key);
+                        } else if (clzz == Integer.class || clzz == int.class) {
+                            return tmp.getInt(key);
+                        } else if (clzz == Long.class || clzz == long.class) {
+                            return tmp.getLong(key);
+                        } else if (clzz == Byte.class || clzz == byte.class) {
+                            return tmp.getByte(key);
+                        } else if (clzz == Short.class || clzz == short.class) {
+                            return tmp.getShort(key);
+                        } else if (clzz == Boolean.class || clzz == boolean.class) {
+                            return tmp.getBool(key);
+                        } else if (clzz == int[].class || clzz == Integer[].class
+                                || clzz == short[].class || clzz == Short[].class
+                                || clzz == byte[].class || clzz == Byte[].class
+                                || clzz == long[].class || clzz == Long[].class) {
+                            return JSONUtil.parseArray(str);
+                        }
+                    }
+                }
+
+            }
+
             return JSONUtil.toBean(str, clzz);
         } catch (JSONException e) {
             if (clzz == Object.class || clzz == String.class) {
                 return str;
-            } else if (clzz == Integer.class) {
+            } else if (clzz == Integer.class || clzz == int.class) {
                 return Integer.parseInt(str);
-            } else if (clzz == Long.class) {
+            } else if (clzz == Long.class || clzz == long.class) {
                 return Long.parseLong(str);
-            } else if (clzz == Byte.class) {
+            } else if (clzz == Byte.class || clzz == byte.class) {
                 return Byte.parseByte(str);
+            } else if (clzz == Short.class || clzz == short.class) {
+                return Short.parseShort(str);
+            } else if (clzz == Boolean.class || clzz == boolean.class) {
+                return Boolean.parseBoolean(str);
             }
         }
 
@@ -184,5 +218,11 @@ public class ClassAgentUtil {
         jsonArray.add("10");
         System.out.println(methodStaticInvoke("com.xck.util.ClassAgentUtil", "obj2Json"
                 , jsonArray));
+
+        System.out.println(json2Obj("{\"user_id\":\"name\"}", String.class));
+        System.out.println(json2Obj("[1,5,7]", int[].class));
+
+        System.out.println(obj2Json(false));
+        System.out.println(obj2Json(new int[]{1,5,7}));
     }
 }

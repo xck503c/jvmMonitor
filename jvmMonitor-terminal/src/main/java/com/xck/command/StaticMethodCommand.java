@@ -1,8 +1,10 @@
 package com.xck.command;
 
 import cn.hutool.core.util.StrUtil;
+import cn.hutool.json.JSONUtil;
 import com.beust.jcommander.IStringConverter;
 
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,7 +14,9 @@ import java.util.List;
  * @author xuchengkun
  * @date 2021/09/11 17:31
  **/
-public class StaticMethod {
+public class StaticMethodCommand extends Command {
+
+    public final static int uri = "/server/staticMethod".hashCode();
 
     private String className;
 
@@ -20,29 +24,25 @@ public class StaticMethod {
 
     private List<String> args;
 
-    /**
-     * 账户缓存转换器
-     *
-     * @author xuchengkun
-     * @date 2021/09/11 17:32
-     **/
-    public static class Convert implements IStringConverter<StaticMethod> {
+    public StaticMethodCommand(String className, String methodName, List<String> args) {
+        this.className = className;
+        this.methodName = methodName;
+        this.args = args;
+    }
 
-        @Override
-        public StaticMethod convert(String s) {
-            String[] args = s.split("#");
-            StaticMethod staticMethod = new StaticMethod();
-            staticMethod.setClassName(args[0]);
-            staticMethod.setMethodName(args[1]);
-            if (args.length > 2) {
-                List<String> argsList = new ArrayList<>();
-                for (int i = 2; i < args.length; i++) {
-                    argsList.add(args[i]);
-                }
-                staticMethod.setArgs(argsList);
-            }
-            return staticMethod;
+    @Override
+    public byte[] bodyBytes() {
+        try {
+            return JSONUtil.toJsonStr(this).getBytes("UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
         }
+        return null;
+    }
+
+    @Override
+    public int commandUri() {
+        return uri;
     }
 
     public String getClassName() {
