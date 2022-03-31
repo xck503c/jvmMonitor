@@ -1,5 +1,6 @@
 package com.xck.agent.controller;
 
+import cn.hutool.core.exceptions.ExceptionUtil;
 import cn.hutool.json.JSONArray;
 import cn.hutool.json.JSONObject;
 import com.xck.annotation.RequestMapping;
@@ -50,8 +51,9 @@ public class ServerController {
         } catch (NoSuchMethodException e) {
             return "{\"resp\":\"method no found\"}";
         } catch (Throwable e) {
+            //其他异常，可能是业务定义的异常，需要返回
             LogUtil.error("other error", e);
-            return "{\"resp\":\"other error\"}";
+            return "{\"resp\":\"other error" + ", " + ExceptionUtil.getRootCauseMessage(e) + "\"}";
         } finally {
             LogUtil.info(String.format("invoke class=%s method=%s args=%s, result=%s"
                     , className, methodName, jsonArray, invokeResultStr));

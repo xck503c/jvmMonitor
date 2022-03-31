@@ -1,8 +1,6 @@
 package com.xck.util;
 
-import cn.hutool.core.util.ArrayUtil;
 import cn.hutool.core.util.ClassUtil;
-import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.json.JSONArray;
 import cn.hutool.json.JSONException;
 import cn.hutool.json.JSONObject;
@@ -29,7 +27,7 @@ public class ClassAgentUtil {
      * @return
      */
     public static Object methodStaticInvoke(String className, String methodName, JSONArray param)
-            throws ClassNotFoundException, NoSuchMethodException, NoSuchFieldException {
+            throws ClassNotFoundException, NoSuchMethodException, NoSuchFieldException, InvocationTargetException {
 
         if (param == null) {
             param = new JSONArray();
@@ -54,7 +52,7 @@ public class ClassAgentUtil {
                         args[i] = json2Obj(param.getStr(i), parameterTypes[i]);
                     }
                     return setMethod.invoke(null, args);
-                } catch (Exception e) {
+                } catch (IllegalAccessException | IllegalArgumentException e) {
                     //说明不符合
                     LogUtil.error("调用异常, 跳过", e);
                 }

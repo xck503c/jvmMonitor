@@ -1,11 +1,10 @@
 package com.xck.util;
 
 import cn.hutool.core.date.DateUtil;
+import cn.hutool.core.exceptions.ExceptionUtil;
 import cn.hutool.core.io.FileUtil;
 import com.xck.SysConstants;
 
-import java.io.FileNotFoundException;
-import java.io.PrintWriter;
 import java.util.Date;
 
 /**
@@ -28,15 +27,9 @@ public class LogUtil {
     public static synchronized void error(String log, String level, Throwable e) {
         String threadName = Thread.currentThread().getName();
         String curData = DateUtil.format(new Date(), "yyyy-MM-dd HH:mm:ss,SSS");
-        FileUtil.appendUtf8String(String.format("%s [%s] %s - %s\n", curData, threadName, level, log)
+        FileUtil.appendUtf8String(String.format("%s [%s] %s - %s, case=%s\n", curData, threadName, level, log, ExceptionUtil.getRootCauseMessage(e))
                 , SysConstants.homePath + "/" + logFileName);
-        try {
-            PrintWriter printWriter = new PrintWriter(logFileName);
-            e.printStackTrace(printWriter);
-            printWriter.flush(); //这里需要flush，不然内容会留在缓冲区里面
-            printWriter.close();
-        } catch (FileNotFoundException e1) {
-        }
+        e.printStackTrace();
     }
 
     public static void info(String log) {

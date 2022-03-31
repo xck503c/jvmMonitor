@@ -17,6 +17,7 @@
     "@form-create/element-ui": "^2.5.19",
     "axios": "^0.26.1",
     "element-ui": "^2.15.6",
+    "qs": "^6.10.3",
     "vue": "^2.5.2",
     "vue-axios": "^3.4.1",
     "vue-json-viewer": "^2.2.22",

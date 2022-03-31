@@ -101,7 +101,19 @@
           }
         }).then(response => {
           this.uri = response.data.uri;
-          var templete = response.data.rule;
+          var templeteStr = JSON.stringify(response.data.rule, function(key, value) {
+            if (typeof value == 'function') {
+              return `func ${value}`;
+            }
+
+            return value;
+          });
+          var templete = JSON.parse(templeteStr, function (key, value) {
+            if (typeof value == 'string') {
+              return value.indexOf('func') > -1 ? new Function(`return ${value.replace('func', '')}`)() : value;
+            }
+            return value;
+          });
           this.rule.pop();
           this.rule.push(templete);
         }).catch(error => {
