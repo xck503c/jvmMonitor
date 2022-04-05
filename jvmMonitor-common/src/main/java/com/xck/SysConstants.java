@@ -1,5 +1,7 @@
 package com.xck;
 
+import java.lang.instrument.Instrumentation;
+
 /**
  * 系统常量配置
  *
@@ -9,6 +11,8 @@ package com.xck;
 public class SysConstants {
 
     public static String homePath;
+
+    public static Instrumentation inst;
 
     public static void setHomePath(String homePath) {
         SysConstants.homePath = homePath;

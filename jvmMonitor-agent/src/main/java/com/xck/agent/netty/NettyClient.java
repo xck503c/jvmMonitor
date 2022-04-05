@@ -1,5 +1,7 @@
 package com.xck.agent.netty;
 
+import com.xck.SysConstants;
+import com.xck.asm.MethodMonitorEnhancer;
 import com.xck.util.LogUtil;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.ChannelFuture;
@@ -9,9 +11,7 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
-import io.netty.handler.timeout.IdleStateHandler;
 
-import java.util.concurrent.TimeUnit;
 
 /**
  * netty服务端
@@ -55,6 +55,7 @@ public class NettyClient extends Thread {
             channelFuture = client.connect("127.0.0.1", port);
 
             if (channelFuture.isSuccess()) {
+                SysConstants.inst.addTransformer(MethodMonitorEnhancer.INSTANCE, true);
                 LogUtil.info("启动客户端成功, 连接端口: " + port);
             }
 
@@ -65,6 +66,9 @@ public class NettyClient extends Thread {
         } finally {
             workerGroup.shutdownGracefully();
             isRunning = false;
+
+            MethodMonitorEnhancer.resetAll(SysConstants.inst);
+            SysConstants.inst.removeTransformer(MethodMonitorEnhancer.INSTANCE);
         }
     }
 
@@ -72,7 +76,7 @@ public class NettyClient extends Thread {
         return isRunning;
     }
 
-    public void shutdown() throws InterruptedException{
+    public void shutdown() throws InterruptedException {
         LogUtil.info("准备关闭客户端，客户端运行状态: " + isRunning);
         if (isRunning && channelFuture != null) {
             channelFuture.channel().close();

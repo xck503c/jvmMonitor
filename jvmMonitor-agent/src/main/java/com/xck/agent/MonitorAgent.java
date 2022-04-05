@@ -21,6 +21,7 @@ public class MonitorAgent {
         try {
             JSONObject configJson = new JSONObject(agentArgs);
             SysConstants.setHomePath(configJson.getStr("homePath"));
+            SysConstants.inst = inst;
             LogUtil.info("attach start, args: " + agentArgs);
             ClientService.client(configJson.getInt("serverPort"));
             AnnotationScanner.scanOriginPlugin(ServerController.class);
