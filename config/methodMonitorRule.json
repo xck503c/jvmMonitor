@@ -1,0 +1,16 @@
+[
+  {
+    "id": "2",
+    "name": "本地测试模板",
+    "rules": [
+      {
+        "name": "业务选择入口",
+        "className": "HttpInterfaceTest",
+        "methodName": "getMap",
+        "isAfter": true,
+        "isBefore": true,
+        "isTryCatch": true
+      }
+    ]
+  }
+]

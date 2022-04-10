@@ -1,7 +1,7 @@
 package com.xck.agent.netty;
 
 import com.xck.SysConstants;
-import com.xck.asm.MethodMonitorEnhancer;
+import com.xck.agent.methodMonitor.MethodMonitorEnhancer;
 import com.xck.util.LogUtil;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.ChannelFuture;
@@ -36,6 +36,7 @@ public class NettyClient extends Thread {
     public void run() {
 
         LogUtil.info("开始启动服务端");
+        SysConstants.inst.addTransformer(MethodMonitorEnhancer.INSTANCE, true);
         isRunning = true;
         EventLoopGroup workerGroup = new NioEventLoopGroup(2);
         try {
@@ -55,7 +56,6 @@ public class NettyClient extends Thread {
             channelFuture = client.connect("127.0.0.1", port);
 
             if (channelFuture.isSuccess()) {
-                SysConstants.inst.addTransformer(MethodMonitorEnhancer.INSTANCE, true);
                 LogUtil.info("启动客户端成功, 连接端口: " + port);
             }
 

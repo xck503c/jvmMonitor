@@ -8,7 +8,7 @@ package com.xck.command;
  **/
 public class TestCommand extends Command {
 
-    public final static int uri = "/activeTest".hashCode();
+    public final static int uri = "/server/activeTest".hashCode();
 
     public static TestCommand testCommand = new TestCommand();
 

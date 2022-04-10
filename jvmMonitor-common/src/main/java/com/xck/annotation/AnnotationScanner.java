@@ -29,7 +29,7 @@ public class AnnotationScanner {
     public static void scanOriginPlugin(Class clzz) throws InstantiationException, IllegalAccessException {
         Map<Integer, ObjExecutor> neworiginPluginMap = new HashMap<>();
         scanController(clzz, neworiginPluginMap);
-        originPluginMap = neworiginPluginMap;
+        originPluginMap.putAll(neworiginPluginMap);
     }
 
     private static void scanController(Class<?> clzz, Map<Integer, ObjExecutor> newPluginMap)

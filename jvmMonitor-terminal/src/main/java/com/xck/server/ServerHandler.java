@@ -47,8 +47,10 @@ public class ServerHandler extends ChannelInboundHandlerAdapter {
             content = byteBuf.readCharSequence(packageLen, Charset.forName("UTF-8")).toString();
         }
 
-        System.out.println("服务端收到, 命令类型:" + commandType + ", 包长度:" + packageLen
-                + ", content: " + content);
+        if (commandType != TestCommand.uri) {
+            System.out.println("服务端收到, 命令类型:" + commandType + ", 包长度:" + packageLen
+                    + ", content: " + content);
+        }
         ServerService.readCommand(ctx, commandType, content);
     }
 

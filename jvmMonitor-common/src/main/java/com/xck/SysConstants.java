@@ -10,7 +10,7 @@ import java.lang.instrument.Instrumentation;
  **/
 public class SysConstants {
 
-    public static String homePath;
+    public static String homePath = System.getProperty("user.dir");
 
     public static Instrumentation inst;
 

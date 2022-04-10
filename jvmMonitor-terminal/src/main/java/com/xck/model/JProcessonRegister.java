@@ -33,6 +33,7 @@ public class JProcessonRegister {
             if (isClient) {
                 return true;
             } else {
+                System.out.println("no has client " + clientRegisterMap);
                 pidRegisterMap.remove(pid);
             }
         }
@@ -45,6 +46,7 @@ public class JProcessonRegister {
     }
 
     public static synchronized boolean registerClient(Integer pid, ChannelHandlerContext channelHandlerContext) {
+        System.out.println("注册: " + pid + ", connect: " + channelHandlerContext);
         ChannelHandlerContext old = clientRegisterMap.putIfAbsent(pid, channelHandlerContext);
         return old == null;
     }

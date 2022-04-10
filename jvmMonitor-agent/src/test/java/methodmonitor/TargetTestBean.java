@@ -1,13 +1,15 @@
+package methodmonitor;
+
 import java.util.HashMap;
 import java.util.Map;
 
 /**
- * http接口测试
+ * 测试bean
  *
  * @author xuchengkun
- * @date 2022/03/20 11:10
+ * @date 2022/04/01 16:41
  **/
-public class HttpInterfaceTest {
+public class TargetTestBean {
 
     private static Map<String, String> map = new HashMap<>();
 

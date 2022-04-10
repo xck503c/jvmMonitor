@@ -1,12 +1,16 @@
-package com.xck.asm;
+package com.xck.agent.methodMonitor;
 
 import cn.hutool.core.collection.CollectionUtil;
+import cn.hutool.core.exceptions.ExceptionUtil;
 import cn.hutool.core.util.ClassUtil;
+import cn.hutool.json.JSONUtil;
 import com.xck.util.LogUtil;
 import javassist.*;
 import javassist.bytecode.LocalVariableAttribute;
 import javassist.bytecode.MethodInfo;
+import sun.rmi.runtime.Log;
 
+import java.io.IOException;
 import java.lang.instrument.ClassFileTransformer;
 import java.lang.instrument.IllegalClassFormatException;
 import java.lang.instrument.Instrumentation;
@@ -40,8 +44,11 @@ public class MethodMonitorEnhancer implements ClassFileTransformer {
         // 获取等待增强的方法
         Set<String> waitMethodName = waitEnhancerClasses.get(classBeingRedefined).getMethods();
         if (CollectionUtil.isEmpty(waitMethodName)) {
+            LogUtil.info(classBeingRedefined + " method is empty");
             return null;
         }
+
+        LogUtil.info("wait enhancer");
 
         className = className.replace("/", ".");
         ClassPool pool = ClassPool.getDefault();
@@ -49,9 +56,11 @@ public class MethodMonitorEnhancer implements ClassFileTransformer {
         try {
             ctClass = pool.getCtClass(className);
         } catch (NotFoundException e) {
-            e.printStackTrace();
-            return null;
+            LogUtil.error("find class error", e);
+            throw new IllegalClassFormatException(ExceptionUtil.getRootCauseMessage(e));
         }
+
+        LogUtil.info("find class");
 
         Set<String> successMethodNames = new HashSet<>();
         for (String methodName : waitMethodName) {
@@ -78,6 +87,7 @@ public class MethodMonitorEnhancer implements ClassFileTransformer {
                 }
             } catch (Exception e) {
                 LogUtil.error("enhance retransformClasses error, class=" + className + ", methodName=" + methodName, e);
+                throw new IllegalClassFormatException(ExceptionUtil.getRootCauseMessage(e));
             }
         }
         try {
@@ -100,20 +110,16 @@ public class MethodMonitorEnhancer implements ClassFileTransformer {
             return ctClassBytes;
         } catch (Exception e) {
             LogUtil.error("enhance retransformClasses eror", e);
+            throw new IllegalClassFormatException(ExceptionUtil.getRootCauseMessage(e));
         }
-
-        return null;
     }
 
-    public static synchronized void enhance(final Instrumentation inst, Set<ClassMethod> newClass) {
+    public static synchronized void enhance(final Instrumentation inst, Set<ClassMethod> newClass)
+            throws UnmodifiableClassException, ClassNotFoundException{
+        LogUtil.info("wait enhance " + JSONUtil.toJsonStr(newClass));
         for (ClassMethod newClassMethod : newClass) {
             //判断是否存在
-            Class c = null;
-            try {
-                c = Class.forName(newClassMethod.getClassName());
-            } catch (ClassNotFoundException e) {
-                continue;
-            }
+            Class c = Class.forName(newClassMethod.getClassName());
             //判断待增强的方法集合是否为空
             Set<String> waitEnhanceMethods = newClassMethod.getMethods();
             if (CollectionUtil.isEmpty(waitEnhanceMethods)) {
@@ -122,11 +128,7 @@ public class MethodMonitorEnhancer implements ClassFileTransformer {
 
             //获取已经增强class
             ClassMethod enhanceClass = enhancerClasses.get(c);
-            //获取该类的所有方法名
-            Set<String> classMethods = ClassUtil.getDeclaredMethodNames(c);
             for (String waitEnhanceMethod : waitEnhanceMethods) {
-                //如果不包含改方法，则跳过
-                if (!classMethods.contains(waitEnhanceMethod)) continue;
                 //已经增强的，则跳过
                 if (enhanceClass != null && enhanceClass.isContainsMethodName(waitEnhanceMethod)) {
                     enhanceClass.addUseCount(); //已经成功增强，增加引用计数
@@ -136,17 +138,16 @@ public class MethodMonitorEnhancer implements ClassFileTransformer {
                 //成功放入待增强集合
                 ClassMethod waitEnhanceClass = waitEnhancerClasses.get(c);
                 if (waitEnhanceClass == null) {
+                    LogUtil.info("put class=" + c);
                     waitEnhancerClasses.put(c, waitEnhanceClass = new ClassMethod(c));
                 }
                 waitEnhanceClass.addMethodName(waitEnhanceMethod);
             }
 
             if (waitEnhancerClasses.size() > 0) {
-                try {
-                    inst.retransformClasses(c);
-                } catch (UnmodifiableClassException e) {
-                    LogUtil.error("enhance retransformClasses eror", e);
-                }
+                LogUtil.info("start enhancer");
+                inst.retransformClasses(c);
+                LogUtil.info("end enhancer");
             }
         }
 
@@ -159,17 +160,16 @@ public class MethodMonitorEnhancer implements ClassFileTransformer {
      * @param inst
      */
     public static synchronized void resetAll(final Instrumentation inst) {
-        try {
-            reset(inst, new HashSet<>(enhancerClasses.values()));
-        } catch (UnmodifiableClassException e) {
-        }
-
-        enhancerClasses.clear();
+//        try {
+//            reset(inst, new HashSet<>(enhancerClasses.values()));
+//        } catch (UnmodifiableClassException e) {
+//        }
+//        enhancerClasses.clear();
         waitEnhancerClasses.clear();
     }
 
     /**
-     * 清除增强内容
+     * 清除增强内容(该方法还是有点问题)
      *
      * @param inst
      * @param resetClassMethods

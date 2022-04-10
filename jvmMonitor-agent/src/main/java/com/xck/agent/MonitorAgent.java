@@ -2,6 +2,7 @@ package com.xck.agent;
 
 import cn.hutool.json.JSONObject;
 import com.xck.SysConstants;
+import com.xck.agent.controller.MethodMonitorController;
 import com.xck.agent.controller.ServerController;
 import com.xck.agent.netty.ClientService;
 import com.xck.annotation.AnnotationScanner;
@@ -25,6 +26,7 @@ public class MonitorAgent {
             LogUtil.info("attach start, args: " + agentArgs);
             ClientService.client(configJson.getInt("serverPort"));
             AnnotationScanner.scanOriginPlugin(ServerController.class);
+            AnnotationScanner.scanOriginPlugin(MethodMonitorController.class);
         } catch (Throwable e) {
             e.printStackTrace();
         }

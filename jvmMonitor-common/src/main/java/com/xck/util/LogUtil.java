@@ -16,31 +16,39 @@ import java.util.Date;
 public class LogUtil {
 
     private final static String logFileName = "output.log";
+    private final static String debugFileName = "debug.log";
 
-    public static synchronized void log(String log, String level) {
-        String threadName = Thread.currentThread().getName();
-        String curData = DateUtil.format(new Date(), "yyyy-MM-dd HH:mm:ss,SSS");
-        FileUtil.appendUtf8String(String.format("%s [%s] %s - %s\n", curData, threadName, level, log)
-                , SysConstants.homePath + "/" + logFileName);
+    public static void log(String fileName, String log, String level) {
+        synchronized (fileName) {
+            String threadName = Thread.currentThread().getName();
+            String curData = DateUtil.format(new Date(), "yyyy-MM-dd HH:mm:ss,SSS");
+            FileUtil.appendUtf8String(String.format("%s [%s] %s - %s\n", curData, threadName, level, log)
+                    , SysConstants.homePath + "/" + fileName);
+        }
     }
 
-    public static synchronized void error(String log, String level, Throwable e) {
-        String threadName = Thread.currentThread().getName();
-        String curData = DateUtil.format(new Date(), "yyyy-MM-dd HH:mm:ss,SSS");
-        FileUtil.appendUtf8String(String.format("%s [%s] %s - %s, case=%s\n", curData, threadName, level, log, ExceptionUtil.getRootCauseMessage(e))
-                , SysConstants.homePath + "/" + logFileName);
-        e.printStackTrace();
+    public static void error(String fileName, String log, String level, Throwable e) {
+        synchronized (fileName) {
+            String threadName = Thread.currentThread().getName();
+            String curData = DateUtil.format(new Date(), "yyyy-MM-dd HH:mm:ss,SSS");
+            FileUtil.appendUtf8String(String.format("%s [%s] %s - %s, case=%s\n", curData, threadName, level, log, ExceptionUtil.getRootCauseMessage(e))
+                    , SysConstants.homePath + "/" + fileName);
+        }
+    }
+
+    public static void methodDebug(String log) {
+        log(debugFileName, log, "INFO");
     }
 
     public static void info(String log) {
-        log(log, "INFO");
+        log(logFileName, log, "INFO");
     }
 
     public static void error(String log, Throwable e) {
-        error(log, "ERROR", e);
+        error(logFileName, log, "ERROR", e);
     }
 
     public static void warn(String log) {
-        log(log, "WARN");
+        log(logFileName, log, "WARN");
     }
 }

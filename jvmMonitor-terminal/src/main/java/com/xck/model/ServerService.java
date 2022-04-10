@@ -1,10 +1,8 @@
 package com.xck.model;
 
+import cn.hutool.json.JSONArray;
 import cn.hutool.json.JSONObject;
-import com.xck.command.Command;
-import com.xck.command.PidCommand;
-import com.xck.command.StaticMethodCommand;
-import com.xck.command.TestCommand;
+import com.xck.command.*;
 import com.xck.server.NettyServer;
 import com.xck.util.StrUtils;
 import io.netty.buffer.ByteBuf;
@@ -53,11 +51,19 @@ public class ServerService {
             boolean result = JProcessonRegister.registerClient(jsonObject.getInt("resp"), ctx);
             resp.put("pid", jsonObject.getInt("resp"));
             resp.put("registerClient", result);
+            JProcessonRegister.commandResp(ctx, resp);
         } else if (commandType == StaticMethodCommand.uri) {
             resp.put("result", StrUtils.json2Obj(content));
-        }
-        if (commandType != TestCommand.uri) {
             JProcessonRegister.commandResp(ctx, resp);
+        } else if (commandType == MethodMonitorRuleQueryCommand.uri) {
+            JProcessonRegister.commandResp(ctx, jsonObject.getJSONArray("resp"));
+        } else if (commandType == MethodMonitorRuleUpdateCommand.uri) {
+            try {
+                JSONArray jsonArray = jsonObject.getJSONArray("resp");
+                JProcessonRegister.commandResp(ctx, jsonArray);
+            } catch (Exception e) {
+                JProcessonRegister.commandResp(ctx, jsonObject.getJSONObject("resp"));
+            }
         }
     }
 }

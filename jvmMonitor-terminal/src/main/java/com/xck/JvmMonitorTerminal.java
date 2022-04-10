@@ -4,6 +4,7 @@ import com.xck.model.ServerService;
 import com.xck.server.NettyServer;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.scheduling.annotation.EnableScheduling;
 
 /**
  * 交互终端
@@ -11,6 +12,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  * @author xuchengkun
  * @date 2021/09/06 10:07
  **/
+@EnableScheduling
 @SpringBootApplication
 public class JvmMonitorTerminal {
 

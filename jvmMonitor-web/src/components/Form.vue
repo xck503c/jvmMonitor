@@ -18,8 +18,8 @@
         </el-menu>
       </div>
     </el-col>
-    <el-col :span="10">
-      <form-create v-model="fApi" :rule="rule" :option="option"></form-create>
+    <el-col :span="12">
+      <form-create v-model="fApi" :rule="rule" :option="options"></form-create>
     </el-col>
   </el-row>
 </template>
@@ -41,7 +41,7 @@
           processonName: ''
         },
         uri: '', //表单请求uri
-        option: {
+        options: {
           // 显示重置表单按扭
           resetBtn: true,
           // 表单提交按扭事件
