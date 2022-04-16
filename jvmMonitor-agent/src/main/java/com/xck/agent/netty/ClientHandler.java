@@ -1,13 +1,12 @@
 package com.xck.agent.netty;
 
-import com.xck.annotation.AnnotationScanner;
-import com.xck.util.LogUtil;
+import com.xck.common.annotation.AnnotationScanner;
+import com.xck.common.util.LogUtil;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 
-import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
 
 /**

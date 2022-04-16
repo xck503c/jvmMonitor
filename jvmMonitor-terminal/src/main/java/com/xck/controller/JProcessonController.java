@@ -6,6 +6,7 @@ import cn.hutool.json.JSONArray;
 import cn.hutool.json.JSONObject;
 import com.xck.model.JProcessonRegister;
 import com.xck.model.ServerService;
+import com.xck.model.http.ReqResponse;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,7 +29,7 @@ public class JProcessonController {
 
     @GetMapping("/list")
     @ResponseBody
-    public String list() {
+    public ReqResponse list() {
         List<String> jpsList = RuntimeUtil.execForLines("jps");
         JSONObject resp = new JSONObject(true);
         JSONArray jsonArray = new JSONArray();
@@ -47,17 +48,15 @@ public class JProcessonController {
             jsonArray.add(jsonObject);
         }
 
-        resp.put("resp", jsonArray);
-
-        return resp.toJSONString(0);
+        return ReqResponse.success(jsonArray);
     }
 
     @PostMapping("/register")
     @ResponseBody
-    public String register(HttpServletRequest request) {
+    public ReqResponse register(HttpServletRequest request) {
         Integer targetPid = Integer.parseInt(request.getParameter("pid"));
         if (JProcessonRegister.isRegister(targetPid)) {
-            return "{\"resp\":\"已经注册\"}";
+            return ReqResponse.error("已经注册");
         }
 
         String processoName = "";
@@ -69,7 +68,7 @@ public class JProcessonController {
         }
 
         if (StrUtil.isBlank(processoName)) {
-            return "{\"resp\":\"不存在该程序\"}";
+            return ReqResponse.error("不存在该程序");
         }
 
         String os = System.getProperty("os.name");
@@ -96,14 +95,15 @@ public class JProcessonController {
 
         if (!result.contains("错误") && !result.contains("Exception") && !result.contains("Error")) {
             JProcessonRegister.registerPid(targetPid, processoName);
+            return ReqResponse.success("注册成功");
+        } else {
+            return ReqResponse.error(result);
         }
-
-        return "{\"resp\":\"" + result + "\"}";
     }
 
     @GetMapping("/register/list")
     @ResponseBody
-    public String registerList() {
-        return "{\"resp\":\"" + JProcessonRegister.pidRegisterMapToString() + "\"}";
+    public ReqResponse registerList() {
+        return ReqResponse.success(JProcessonRegister.pidRegisterMapToString());
     }
 }

@@ -1,7 +1,7 @@
 package com.xck.model;
 
 import cn.hutool.core.io.FileUtil;
-import com.xck.util.StrUtils;
+import com.xck.common.util.StrUtils;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;

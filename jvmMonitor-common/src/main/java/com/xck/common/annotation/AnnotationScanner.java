@@ -1,18 +1,12 @@
-package com.xck.annotation;
+package com.xck.common.annotation;
 
 import cn.hutool.core.annotation.AnnotationUtil;
-import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.util.ClassUtil;
 import cn.hutool.core.util.StrUtil;
-import com.xck.util.LogUtil;
-import com.xck.util.PluginClassLoader;
 
-import java.io.File;
 import java.lang.reflect.Method;
-import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * 注解扫描器

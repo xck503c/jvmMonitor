@@ -1,12 +1,13 @@
 package com.xck.agent;
 
 import cn.hutool.json.JSONObject;
-import com.xck.SysConstants;
+import com.xck.agent.methodMonitor.MethodInvokeListenerManager;
+import com.xck.common.constant.SysConstants;
 import com.xck.agent.controller.MethodMonitorController;
 import com.xck.agent.controller.ServerController;
 import com.xck.agent.netty.ClientService;
-import com.xck.annotation.AnnotationScanner;
-import com.xck.util.LogUtil;
+import com.xck.common.annotation.AnnotationScanner;
+import com.xck.common.util.LogUtil;
 
 import java.lang.instrument.Instrumentation;
 
@@ -22,7 +23,7 @@ public class MonitorAgent {
         try {
             JSONObject configJson = new JSONObject(agentArgs);
             SysConstants.setHomePath(configJson.getStr("homePath"));
-            SysConstants.inst = inst;
+            MethodInvokeListenerManager.inst = inst;
             LogUtil.info("attach start, args: " + agentArgs);
             ClientService.client(configJson.getInt("serverPort"));
             AnnotationScanner.scanOriginPlugin(ServerController.class);

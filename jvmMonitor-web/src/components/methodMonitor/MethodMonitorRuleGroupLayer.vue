@@ -22,7 +22,8 @@
                 'Content-Type': 'application/json'
               }
             }).then(response => {
-              alert(JSON.stringify(response.data));
+              var response = response.data;
+              alert(response.msg);
               parent.location.reload(); // 父页面刷新
             }).catch(error => {
               console.log(error);

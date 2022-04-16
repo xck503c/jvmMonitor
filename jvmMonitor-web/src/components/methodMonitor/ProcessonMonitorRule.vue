@@ -57,7 +57,8 @@
           'Content-Type': 'application/json'
         }
       }).then(response => {
-        if (Array.isArray(response.data))  {
+        var response = response.data;
+        if (response.code == 200) {
           var newList = [];
           for (var index in response.data) {
             var item = response.data[index];
@@ -75,7 +76,7 @@
           }
           this.ruleList = newList;
         } else {
-          alert(response.data);
+          alert(response.msg);
         }
       }).catch(error => {
         alert(error);
@@ -102,11 +103,12 @@
             'Content-Type': 'application/json'
           }
         }).then(response => {
-          if (Array.isArray(response.data))  {
+          var response = reponse.data;
+          if (response.code == 200)  {
             this.tableData = response.data;
             this.tableData.push({"id":"","name":""});
           } else {
-            alert(response.data);
+            alert(response.msg);
           }
         }).catch(error => {
           alert(error);
@@ -124,22 +126,26 @@
             'Content-Type': 'application/json'
           }
         }).then(response => {
-          // this.msg = response.data;
-          this.$layer.iframe({
-            content: {
-              content: RespLayer,
-              parent: this,
-              data: {iframeData: response.data}
-            },
-            area: ['900px', '600px'],
-            title: '响应',
-            maxmin: true,
-            shade: false,
-            shadeClose: false,
-            cancel: () => { //关闭弹窗事件
-              alert('关闭?');
-            }
-          });
+          var response = reponse.data;
+          if (response.code == 200)  {
+            this.$layer.iframe({
+              content: {
+                content: RespLayer,
+                parent: this,
+                data: {iframeData: response.data}
+              },
+              area: ['900px', '600px'],
+              title: '响应',
+              maxmin: true,
+              shade: false,
+              shadeClose: false,
+              cancel: () => { //关闭弹窗事件
+                alert('关闭?');
+              }
+            });
+          } else {
+            alert(response.msg);
+          }
         }).catch(error => {
           alert(error);
         });
@@ -152,7 +158,7 @@
         }
 
         this.$axios({
-          url: 'http://localhost:8080/methodMonitor/rule/update',
+          url: '/methodMonitor/rule/update',
           method: 'post',
           data: {
             pid: this.pid,
@@ -162,11 +168,12 @@
             'Content-Type': 'application/json'
           }
         }).then(response => {
-          if (Array.isArray(response.data))  {
+          var response = reponse.data;
+          if (response.code == 200)  {
             this.tableData = response.data;
             this.tableData.push({"id":"","name":""});
           } else {
-            alert(response.data);
+            alert(response.msg);
           }
         }).catch(error => {
           alert(error);

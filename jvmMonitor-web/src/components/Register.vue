@@ -1,19 +1,5 @@
 <template>
   <el-row :gutter="20">
-    <!--<el-col :span="6">-->
-    <!--<div class="menu">-->
-    <!--<el-menu class="el-menu-vertical-demo">-->
-    <!--<el-menu-item>-->
-    <!--<i class="el-icon-menu"></i>-->
-    <!--<span slot="title">程序列表</span>-->
-    <!--</el-menu-item>-->
-    <!--<el-menu-item>-->
-    <!--<i class="el-icon-menu"></i>-->
-    <!--<span slot="title">方法调用监控规则</span>-->
-    <!--</el-menu-item>-->
-    <!--</el-menu>-->
-    <!--</div>-->
-    <!--</el-col>-->
     <el-table :data="tableData">
       <el-table-column prop="pid" label="PID" width="180"/>
       <el-table-column prop="processonName" label="程序名" width="360"/>
@@ -43,12 +29,17 @@
       // var response = JSON.parse("{\"resp\":[{\"pid\":124,\"processonName\":\"LongSmsSpliceMain\",\"status\":\"未注册\"}]}");
       // this.tableData = response.resp;
       this.$axios({
-        url: 'http://localhost:8080/jp/list',
+        url: '/jp/list',
         method: 'get',
       }).then(response => {
         // var result = JSON.parse(response.data);
         //response.data表示响应数据
-        this.tableData = response.data.resp;
+        var response = response.data;
+        if (response.code == 200) {
+          this.tableData = response.data;
+        } else {
+          alert(response.msg);
+        }
       }).catch(error => {
         alert(error);
       });
@@ -56,7 +47,7 @@
     methods: {
       handleRegisterClick(pid) {
         this.$axios({
-          url: 'http://localhost:8080/jp/register',
+          url: '/jp/register',
           method: 'post',
           data: {
             pid: pid
@@ -73,7 +64,8 @@
             'Content-Type': 'application/x-www-form-urlencoded'
           }
         }).then(response => {
-          alert(response.data)
+          var response = response.data;
+          alert(response.msg);
         }).catch(error => {
           alert(error.data);
         });
@@ -89,7 +81,7 @@
       },
       handleRuleListClick(pid) {
         this.$axios({
-          url: "http://localhost:8080/methodMonitor/rule/jp/list",
+          url: "/methodMonitor/rule/jp/list",
           method: 'post',
           data: {
             "pid": pid
@@ -98,19 +90,20 @@
             'Content-Type': 'application/json'
           }
         }).then(response => {
-          if (response.data.resp == 'no register') {
-            alert(response.data.resp);
-            return;
-          }
-          this.$router.push(
-            {
-              path: '/ProcessonMonitorRule',
-              query: {
-                pid: pid,
-                data: response.data
+          var response = response.data;
+          if (response.code == 200) {
+            this.$router.push(
+              {
+                path: '/ProcessonMonitorRule',
+                query: {
+                  pid: pid,
+                  data: response.data
+                }
               }
-            }
-          )
+            )
+          } else {
+            alert(response.msg);
+          }
         }).catch(error => {
           console.log(error);
         });

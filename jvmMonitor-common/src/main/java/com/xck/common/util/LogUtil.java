@@ -1,9 +1,9 @@
-package com.xck.util;
+package com.xck.common.util;
 
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.exceptions.ExceptionUtil;
 import cn.hutool.core.io.FileUtil;
-import com.xck.SysConstants;
+import com.xck.common.constant.SysConstants;
 
 import java.util.Date;
 

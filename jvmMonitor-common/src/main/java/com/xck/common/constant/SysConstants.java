@@ -1,6 +1,4 @@
-package com.xck;
-
-import java.lang.instrument.Instrumentation;
+package com.xck.common.constant;
 
 /**
  * 系统常量配置
@@ -11,8 +9,6 @@ import java.lang.instrument.Instrumentation;
 public class SysConstants {
 
     public static String homePath = System.getProperty("user.dir");
-
-    public static Instrumentation inst;
 
     public static void setHomePath(String homePath) {
         SysConstants.homePath = homePath;

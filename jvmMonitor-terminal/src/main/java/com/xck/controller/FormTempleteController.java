@@ -1,6 +1,7 @@
 package com.xck.controller;
 
 import com.xck.model.FormTempleteList;
+import com.xck.model.http.ReqResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -26,19 +27,19 @@ public class FormTempleteController {
 
     @GetMapping("/menuList")
     @ResponseBody
-    public Object menuList(){
-        return formTempleteList.templateMenus();
+    public ReqResponse menuList(){
+        return ReqResponse.success(formTempleteList.templateMenus());
     }
 
     @GetMapping("/templete")
     @ResponseBody
-    public Object templete(HttpServletRequest request) {
+    public ReqResponse templete(HttpServletRequest request) {
         int templeteId = Integer.parseInt(request.getParameter("templeteId"));
         FormTempleteList.FormTemplate formTemplate = formTempleteList.templateByIndex(templeteId);
         if (formTemplate == null) {
-            return "{\"resp\":\"没有该模板\"}";
+            return ReqResponse.error("没有该模板");
         }
 
-        return formTemplate;
+        return ReqResponse.success(formTemplate);
     }
 }

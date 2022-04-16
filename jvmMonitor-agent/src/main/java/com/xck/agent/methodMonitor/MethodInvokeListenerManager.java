@@ -4,12 +4,12 @@ import cn.hutool.core.util.ClassUtil;
 import cn.hutool.json.JSONArray;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
-import com.xck.SysConstants;
-import com.xck.asm.MethodInvokeMsg;
-import com.xck.asm.MethodMonitorRule;
-import com.xck.asm.MethodMonitorRuleGroup;
-import com.xck.util.LogUtil;
+import com.xck.common.methodMonitor.MethodInvokeMsg;
+import com.xck.common.methodMonitor.MethodMonitorRule;
+import com.xck.common.methodMonitor.MethodMonitorRuleGroup;
+import com.xck.common.util.LogUtil;
 
+import java.lang.instrument.Instrumentation;
 import java.util.*;
 
 /**
@@ -21,7 +21,7 @@ import java.util.*;
 public class MethodInvokeListenerManager {
 
     /**
-     * 存储同个线程处理的结果
+     * 存储同个线程处理结果
      * key -- 方法+类名
      * value -- 具有同组规则id的列表
      */
@@ -33,6 +33,8 @@ public class MethodInvokeListenerManager {
     };
 
     private static volatile List<MethodMonitorRuleGroup> ruleGroupList;
+
+    public static Instrumentation inst;
 
     /**
      * 更新规则
@@ -77,7 +79,7 @@ public class MethodInvokeListenerManager {
         }
 
         if (tmpFilterMap.size() > 0) {
-            MethodMonitorEnhancer.enhance(SysConstants.inst, new HashSet<>(tmpFilterMap.values()));
+            MethodMonitorEnhancer.enhance(inst, new HashSet<>(tmpFilterMap.values()));
             ruleGroupList = newRuleGroupList;
             LogUtil.info("update rule " + JSONUtil.toJsonStr(newRuleGroupList));
         } else {

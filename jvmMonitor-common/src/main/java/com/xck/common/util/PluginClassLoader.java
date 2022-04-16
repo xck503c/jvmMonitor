@@ -1,4 +1,4 @@
-package com.xck.util;
+package com.xck.common.util;
 
 import java.net.URL;
 import java.net.URLClassLoader;

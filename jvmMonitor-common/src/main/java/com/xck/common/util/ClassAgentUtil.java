@@ -1,10 +1,11 @@
-package com.xck.util;
+package com.xck.common.util;
 
 import cn.hutool.core.util.ClassUtil;
 import cn.hutool.json.JSONArray;
 import cn.hutool.json.JSONException;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
+import com.xck.common.util.LogUtil;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -52,7 +53,7 @@ public class ClassAgentUtil {
                         args[i] = json2Obj(param.getStr(i), parameterTypes[i]);
                     }
                     return setMethod.invoke(null, args);
-                } catch (IllegalAccessException | IllegalArgumentException e) {
+                } catch (IllegalAccessException | IllegalArgumentException | ClassCastException e) {
                     //说明不符合
                     LogUtil.error("调用异常, 跳过", e);
                 }
@@ -214,7 +215,7 @@ public class ClassAgentUtil {
     public static void main(String[] args) throws Exception {
         JSONArray jsonArray = new JSONArray();
         jsonArray.add("10");
-        System.out.println(methodStaticInvoke("com.xck.util.ClassAgentUtil", "obj2Json"
+        System.out.println(methodStaticInvoke("com.xck.common.util.ClassAgentUtil", "obj2Json"
                 , jsonArray));
 
         System.out.println(json2Obj("{\"user_id\":\"name\"}", String.class));

@@ -1,14 +1,10 @@
 package methodmonitor;
 
-import cn.hutool.json.JSONObject;
-import cn.hutool.json.JSONUtil;
-import com.sun.javafx.runtime.SystemProperties;
-import com.xck.SysConstants;
+import com.xck.common.constant.SysConstants;
 import com.xck.agent.methodMonitor.MethodInvokeListenerManager;
 import com.xck.agent.methodMonitor.MethodMonitorEnhancer;
-import com.xck.asm.MethodMonitorRule;
-import com.xck.asm.MethodMonitorRuleGroup;
-import com.xck.util.ClassAgentUtil;
+import com.xck.common.methodMonitor.MethodMonitorRule;
+import com.xck.common.methodMonitor.MethodMonitorRuleGroup;
 import net.bytebuddy.agent.ByteBuddyAgent;
 
 import java.lang.instrument.Instrumentation;
@@ -29,7 +25,7 @@ public class MethodMonitorHandlerTest {
         Instrumentation instrumentation = ByteBuddyAgent.install();
         instrumentation.addTransformer(MethodMonitorEnhancer.INSTANCE, true);
 
-        SysConstants.inst = instrumentation;
+        MethodInvokeListenerManager.inst = instrumentation;
 
         List<MethodMonitorRuleGroup> list = new ArrayList<>();
         MethodMonitorRuleGroup ruleGroup = new MethodMonitorRuleGroup();

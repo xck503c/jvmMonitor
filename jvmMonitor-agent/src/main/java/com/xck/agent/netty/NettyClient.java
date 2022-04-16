@@ -1,8 +1,8 @@
 package com.xck.agent.netty;
 
-import com.xck.SysConstants;
+import com.xck.agent.methodMonitor.MethodInvokeListenerManager;
 import com.xck.agent.methodMonitor.MethodMonitorEnhancer;
-import com.xck.util.LogUtil;
+import com.xck.common.util.LogUtil;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
@@ -36,7 +36,7 @@ public class NettyClient extends Thread {
     public void run() {
 
         LogUtil.info("开始启动服务端");
-        SysConstants.inst.addTransformer(MethodMonitorEnhancer.INSTANCE, true);
+        MethodInvokeListenerManager.inst.addTransformer(MethodMonitorEnhancer.INSTANCE, true);
         isRunning = true;
         EventLoopGroup workerGroup = new NioEventLoopGroup(2);
         try {
@@ -67,8 +67,8 @@ public class NettyClient extends Thread {
             workerGroup.shutdownGracefully();
             isRunning = false;
 
-            MethodMonitorEnhancer.resetAll(SysConstants.inst);
-            SysConstants.inst.removeTransformer(MethodMonitorEnhancer.INSTANCE);
+            MethodMonitorEnhancer.resetAll(MethodInvokeListenerManager.inst);
+            MethodInvokeListenerManager.inst.removeTransformer(MethodMonitorEnhancer.INSTANCE);
         }
     }
 

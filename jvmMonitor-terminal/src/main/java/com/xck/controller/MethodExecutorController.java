@@ -1,20 +1,15 @@
 package com.xck.controller;
 
 import cn.hutool.core.util.StrUtil;
-import cn.hutool.http.HtmlUtil;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 import com.xck.command.StaticMethodCommand;
 import com.xck.model.JProcessonRegister;
 import com.xck.model.ServerService;
-import com.xck.util.HttpUtils;
+import com.xck.model.http.ReqResponse;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.*;
 
 /**
@@ -33,14 +28,10 @@ public class MethodExecutorController {
 
     @PostMapping("/static")
     @ResponseBody
-    public Object staticMethod(HttpServletRequest request) throws Exception {
-        String json = HttpUtils.readJson(request);
-
-        JSONObject reqJsonObj = JSONUtil.parseObj(json);
-
+    public ReqResponse staticMethod(@RequestBody JSONObject reqJsonObj) throws Exception {
         Integer pid = reqJsonObj.getInt("pid");
         if (!JProcessonRegister.isRegister(pid)) {
-            return JSONUtil.parseObj("{\"resp\":\"未注册\"}");
+            return ReqResponse.error("未注册");
         }
 
         String className = reqJsonObj.getStr("className");
@@ -55,6 +46,6 @@ public class MethodExecutorController {
         }
 
         JSONObject result = (JSONObject) ServerService.writeCommand(pid, new StaticMethodCommand(className, method, args), false);
-        return JSONUtil.toBean(result, HashMap.class);
+        return ReqResponse.success(JSONUtil.toBean(result, HashMap.class));
     }
 }

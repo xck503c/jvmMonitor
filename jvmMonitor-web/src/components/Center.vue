@@ -1,5 +1,5 @@
 <template>
-  <el-row :gutter="20">
+  <el-row :gutter="10">
     <el-col :span="6">
       <div class="menu">
         <el-menu class="el-menu-vertical-demo" :default-active="this.$router.path" router style="text-align: left;">

@@ -1,4 +1,4 @@
-package com.xck.util;
+package com.xck.common.util;
 
 import cn.hutool.json.JSONException;
 import cn.hutool.json.JSONUtil;

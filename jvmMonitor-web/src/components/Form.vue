@@ -86,7 +86,12 @@
         url: '/ft/menuList',
         method: 'get',
       }).then(response => {
-        this.menuList = response.data;
+        var response = response.data;
+        if (response.code == 200) {
+          this.menuList = response.data;
+        } else {
+          alert(response.msg);
+        }
       }).catch(error => {
         alert(error);
       });
@@ -100,22 +105,28 @@
             templeteId: id
           }
         }).then(response => {
-          this.uri = response.data.uri;
-          var templeteStr = JSON.stringify(response.data.rule, function(key, value) {
-            if (typeof value == 'function') {
-              return `func ${value}`;
-            }
+          var response = response.data;
+          if (response.code == 200) {
+            var data = response.data;
+            this.uri = data.uri;
+            var templeteStr = JSON.stringify(data.rule, function (key, value) {
+              if (typeof value == 'function') {
+                return `func ${value}`;
+              }
 
-            return value;
-          });
-          var templete = JSON.parse(templeteStr, function (key, value) {
-            if (typeof value == 'string') {
-              return value.indexOf('func') > -1 ? new Function(`return ${value.replace('func', '')}`)() : value;
-            }
-            return value;
-          });
-          this.rule.pop();
-          this.rule.push(templete);
+              return value;
+            });
+            var templete = JSON.parse(templeteStr, function (key, value) {
+              if (typeof value == 'string') {
+                return value.indexOf('func') > -1 ? new Function(`return ${value.replace('func', '')}`)() : value;
+              }
+              return value;
+            });
+            this.rule.pop();
+            this.rule.push(templete);
+          } else {
+            alert(response.msg);
+          }
         }).catch(error => {
           alert(error);
         });

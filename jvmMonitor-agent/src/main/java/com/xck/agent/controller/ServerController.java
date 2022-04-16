@@ -3,9 +3,9 @@ package com.xck.agent.controller;
 import cn.hutool.core.exceptions.ExceptionUtil;
 import cn.hutool.json.JSONArray;
 import cn.hutool.json.JSONObject;
-import com.xck.annotation.RequestMapping;
-import com.xck.util.ClassAgentUtil;
-import com.xck.util.LogUtil;
+import com.xck.common.annotation.RequestMapping;
+import com.xck.common.util.ClassAgentUtil;
+import com.xck.common.util.LogUtil;
 
 import java.lang.management.ManagementFactory;
 
