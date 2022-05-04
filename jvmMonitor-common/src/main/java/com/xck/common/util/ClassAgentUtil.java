@@ -53,7 +53,7 @@ public class ClassAgentUtil {
                         args[i] = json2Obj(param.getStr(i), parameterTypes[i]);
                     }
                     return setMethod.invoke(null, args);
-                } catch (IllegalAccessException | IllegalArgumentException | ClassCastException e) {
+                } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException | ClassCastException e) {
                     //说明不符合
                     LogUtil.error("调用异常, 跳过", e);
                 }

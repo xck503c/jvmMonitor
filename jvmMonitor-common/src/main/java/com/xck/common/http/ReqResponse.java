@@ -1,7 +1,6 @@
-package com.xck.model.http;
+package com.xck.common.http;
 
 import cn.hutool.http.HttpStatus;
-import cn.hutool.http.HttpUtil;
 
 import java.util.HashMap;
 
@@ -68,5 +67,16 @@ public class ReqResponse extends HashMap<String, Object> {
 
     public static ReqResponse error(String msg) {
         return new ReqResponse(HttpStatus.HTTP_INTERNAL_ERROR, msg);
+    }
+
+    public boolean isSuccess() {
+        return super.get(CODE) != null && (Integer)super.get(CODE) == HttpStatus.HTTP_OK;
+    }
+
+    public Object getData() {
+        return super.get(DATA);
+    }
+    public Object setData(Object data) {
+        return super.put(DATA, data);
     }
 }

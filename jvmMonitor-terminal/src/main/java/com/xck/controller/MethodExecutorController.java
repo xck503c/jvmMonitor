@@ -4,9 +4,10 @@ import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 import com.xck.command.StaticMethodCommand;
+import com.xck.common.util.StrUtils;
 import com.xck.model.JProcessonRegister;
 import com.xck.model.ServerService;
-import com.xck.model.http.ReqResponse;
+import com.xck.common.http.ReqResponse;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -44,8 +45,7 @@ public class MethodExecutorController {
 
             args.add(value);
         }
-
-        JSONObject result = (JSONObject) ServerService.writeCommand(pid, new StaticMethodCommand(className, method, args), false);
-        return ReqResponse.success(JSONUtil.toBean(result, HashMap.class));
+        ReqResponse reqResponse = ServerService.writeCommand(pid, new StaticMethodCommand(className, method, args), false);
+        return reqResponse;
     }
 }

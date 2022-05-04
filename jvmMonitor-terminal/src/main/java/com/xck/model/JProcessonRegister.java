@@ -1,6 +1,7 @@
 package com.xck.model;
 
 import cn.hutool.json.JSONUtil;
+import com.xck.common.http.ReqResponse;
 import io.netty.channel.ChannelHandlerContext;
 
 import java.util.HashMap;
@@ -20,7 +21,7 @@ public class JProcessonRegister {
     private static Map<Integer, ChannelHandlerContext> clientRegisterMap = new HashMap<>();
     /* key=pid, value=processonName */
     private static Map<Integer, String> pidRegisterMap = new HashMap<>();
-    private static Map<ChannelHandlerContext, SynchronousQueue> commandSyncQueue = new HashMap<>();
+    private static Map<ChannelHandlerContext, SynchronousQueue<ReqResponse>> commandSyncQueue = new HashMap<>();
 
     public static synchronized ChannelHandlerContext getCtx(Integer targetPid) {
         return clientRegisterMap.get(targetPid);
@@ -46,9 +47,10 @@ public class JProcessonRegister {
     }
 
     public static synchronized boolean registerClient(Integer pid, ChannelHandlerContext channelHandlerContext) {
-        System.out.println("注册: " + pid + ", connect: " + channelHandlerContext);
         ChannelHandlerContext old = clientRegisterMap.putIfAbsent(pid, channelHandlerContext);
-        return old == null;
+        boolean result = old == null;
+        System.out.println("注册: " + pid + ", connect: " + channelHandlerContext + ", result=" + result);
+        return result;
     }
 
     public static synchronized boolean deRegister(ChannelHandlerContext channelHandlerContext) {
@@ -72,7 +74,7 @@ public class JProcessonRegister {
     public static synchronized SynchronousQueue getCommandRespQueue(ChannelHandlerContext ctx) {
         SynchronousQueue queue = commandSyncQueue.get(ctx);
         if (queue == null) {
-            commandSyncQueue.put(ctx, queue = new SynchronousQueue(true));
+            commandSyncQueue.put(ctx, queue = new SynchronousQueue<>(true));
         }
         return queue;
     }

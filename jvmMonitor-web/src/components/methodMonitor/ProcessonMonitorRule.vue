@@ -103,7 +103,7 @@
             'Content-Type': 'application/json'
           }
         }).then(response => {
-          var response = reponse.data;
+          var response = response.data;
           if (response.code == 200)  {
             this.tableData = response.data;
             this.tableData.push({"id":"","name":""});
@@ -126,7 +126,7 @@
             'Content-Type': 'application/json'
           }
         }).then(response => {
-          var response = reponse.data;
+          var response = response.data;
           if (response.code == 200)  {
             this.$layer.iframe({
               content: {
@@ -168,7 +168,7 @@
             'Content-Type': 'application/json'
           }
         }).then(response => {
-          var response = reponse.data;
+          var response = response.data;
           if (response.code == 200)  {
             this.tableData = response.data;
             this.tableData.push({"id":"","name":""});

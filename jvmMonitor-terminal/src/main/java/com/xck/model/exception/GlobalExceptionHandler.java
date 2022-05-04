@@ -1,7 +1,7 @@
 package com.xck.model.exception;
 
 import com.xck.common.util.LogUtil;
-import com.xck.model.http.ReqResponse;
+import com.xck.common.http.ReqResponse;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 

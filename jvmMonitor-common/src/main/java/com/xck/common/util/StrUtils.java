@@ -1,6 +1,7 @@
 package com.xck.common.util;
 
 import cn.hutool.json.JSONException;
+import cn.hutool.json.JSONNull;
 import cn.hutool.json.JSONUtil;
 
 import java.util.HashMap;
@@ -23,7 +24,12 @@ public class StrUtils {
         HashMap<String, Object> result = new HashMap<>();
         for (String key : jsonValueHashMap.keySet()) {
             Object value = jsonValueHashMap.get(key);
-            if (value == null) continue;
+            if (key.equals("randomServiceCode")) {
+                System.out.println(1);
+            }
+            if (value == null || value == JSONNull.NULL) {
+                continue;
+            }
 
             try {
                 HashMap<String, Object> valueHashMap = JSONUtil.toBean(value.toString(), HashMap.class);

@@ -1,6 +1,8 @@
 package com.xck.agent.netty;
 
+import cn.hutool.json.JSONUtil;
 import com.xck.common.annotation.AnnotationScanner;
+import com.xck.common.http.ReqResponse;
 import com.xck.common.util.LogUtil;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
@@ -30,7 +32,7 @@ public class ClientHandler extends ChannelInboundHandlerAdapter {
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
 
-        byte[] respContent = "{\"resp\":\"system error\"}".getBytes(Charset.forName("UTF-8"));
+        ReqResponse reqResponse = ReqResponse.error("system error");
 
         int commandType = -1;
         try {
@@ -43,7 +45,7 @@ public class ClientHandler extends ChannelInboundHandlerAdapter {
 
             AnnotationScanner.ObjExecutor objExecutor = AnnotationScanner.originPluginMap.get(commandType);
             if (objExecutor == null) {
-                respContent = "{\"resp\":\"404 no found\"}".getBytes(Charset.forName("UTF-8"));
+                reqResponse = ReqResponse.error("404 no found");
                 return;
             }
 
@@ -51,14 +53,10 @@ public class ClientHandler extends ChannelInboundHandlerAdapter {
             if (packageLen > 0) {
                 content = byteBuf.readCharSequence(packageLen, Charset.forName("UTF-8")).toString();
             }
-            LogUtil.info("客户端收到, 命令类型:"+commandType + ", 包长度:"+packageLen
+            LogUtil.info("客户端收到, 命令类型:" + commandType + ", 包长度:" + packageLen
                     + ", content: " + content);
 
-            String resp = (String)objExecutor.getMethod().invoke(objExecutor.getObject(), content);
-            respContent = resp.getBytes(Charset.forName("UTF-8"));
-
-            LogUtil.info("客户端回复, 命令类型:"+commandType + ", 包长度:"+respContent.length
-                    + ", content: " + resp);
+            reqResponse = (ReqResponse) objExecutor.getMethod().invoke(objExecutor.getObject(), content);
 
         } catch (IllegalArgumentException e) {
             LogUtil.error("client read error: ", e);
@@ -66,10 +64,15 @@ public class ClientHandler extends ChannelInboundHandlerAdapter {
             e.printStackTrace();
             LogUtil.error("client error: ", e);
         } finally {
+            String respStr = JSONUtil.toJsonStr(reqResponse);
+            byte[] respBytes = respStr.getBytes(Charset.forName("UTF-8"));
+            LogUtil.info("客户端回复, 命令类型:" + commandType + ", 包长度:" + respBytes.length
+                    + ", content: " + respStr);
+
             ByteBuf resp = Unpooled.buffer();
             resp.writeInt(commandType);
-            resp.writeInt(respContent.length);
-            resp.writeBytes(respContent);
+            resp.writeInt(respBytes.length);
+            resp.writeBytes(respBytes);
             ctx.writeAndFlush(resp);
         }
     }

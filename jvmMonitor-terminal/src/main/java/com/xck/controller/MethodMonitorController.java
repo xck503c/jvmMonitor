@@ -8,7 +8,7 @@ import com.xck.command.MethodMonitorRuleUpdateCommand;
 import com.xck.model.JProcessonRegister;
 import com.xck.model.MethodMonitorRuleCenter;
 import com.xck.model.ServerService;
-import com.xck.model.http.ReqResponse;
+import com.xck.common.http.ReqResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -62,7 +62,7 @@ public class MethodMonitorController {
             return ReqResponse.error("未注册");
         }
 
-        return ReqResponse.success(ServerService.writeCommand(pid, new MethodMonitorRuleQueryCommand(), false));
+        return ServerService.writeCommand(pid, new MethodMonitorRuleQueryCommand(), false);
     }
 
     @PostMapping("/rule/update")
@@ -77,7 +77,7 @@ public class MethodMonitorController {
         JSONArray ids = reqJsonObj.getJSONArray("ids");
         List<MethodMonitorRuleGroup> ruleGroups = methodMonitorRuleCenter.queryRuleGroup(ids);
 
-        return ReqResponse.success(ServerService.writeCommand(pid, new MethodMonitorRuleUpdateCommand(ruleGroups), false));
+        return ServerService.writeCommand(pid, new MethodMonitorRuleUpdateCommand(ruleGroups), false);
     }
 
     @PostMapping("/rule/result/query")

@@ -1,7 +1,9 @@
 package com.xck.server;
 
+import cn.hutool.json.JSONUtil;
 import com.xck.command.PidCommand;
 import com.xck.command.TestCommand;
+import com.xck.common.http.ReqResponse;
 import com.xck.model.JProcessonRegister;
 import com.xck.model.ServerService;
 import com.xck.common.util.LogUtil;
@@ -50,7 +52,8 @@ public class ServerHandler extends ChannelInboundHandlerAdapter {
             System.out.println("服务端收到, 命令类型:" + commandType + ", 包长度:" + packageLen
                     + ", content: " + content);
         }
-        ServerService.readCommand(ctx, commandType, content);
+        ReqResponse reqResponse = JSONUtil.toBean(content, ReqResponse.class);
+        ServerService.readCommand(ctx, commandType, reqResponse);
     }
 
     @Override
@@ -62,7 +65,6 @@ public class ServerHandler extends ChannelInboundHandlerAdapter {
 
     @Override
     public void userEventTriggered(ChannelHandlerContext ctx, Object evt) throws Exception {
-
         LogUtil.info("服务端发送心跳检测...");
         ServerService.writeCommand(ctx, TestCommand.testCommand, true);
     }

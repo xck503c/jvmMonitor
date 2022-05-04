@@ -6,7 +6,7 @@ import cn.hutool.json.JSONArray;
 import cn.hutool.json.JSONObject;
 import com.xck.model.JProcessonRegister;
 import com.xck.model.ServerService;
-import com.xck.model.http.ReqResponse;
+import com.xck.common.http.ReqResponse;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 

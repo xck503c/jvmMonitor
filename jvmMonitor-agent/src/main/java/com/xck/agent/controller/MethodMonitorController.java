@@ -5,6 +5,7 @@ import cn.hutool.json.JSONArray;
 import cn.hutool.json.JSONObject;
 import com.xck.agent.methodMonitor.MethodInvokeListenerManager;
 import com.xck.common.annotation.RequestMapping;
+import com.xck.common.http.ReqResponse;
 import com.xck.common.methodMonitor.MethodMonitorRuleGroup;
 import com.xck.common.util.LogUtil;
 
@@ -21,7 +22,7 @@ import java.util.List;
 public class MethodMonitorController {
 
     @RequestMapping("/rule/update")
-    public String ruleUpdate(String json) throws Exception {
+    public ReqResponse ruleUpdate(String json) throws Exception {
         try {
             JSONObject jsonObject = new JSONObject(json);
             JSONArray jsonArray = jsonObject.getJSONArray("args");
@@ -29,26 +30,22 @@ public class MethodMonitorController {
             for (int i = 0; i < jsonArray.size(); i++) {
                 list.add(jsonArray.getBean(i, MethodMonitorRuleGroup.class));
             }
-            JSONObject result = new JSONObject();
-            result.put("resp", MethodInvokeListenerManager.updateRule(list));
-            return result.toJSONString(0);
+            return ReqResponse.success(MethodInvokeListenerManager.updateRule(list));
         } catch (Throwable e) {
             //其他异常，可能是业务定义的异常，需要返回
             LogUtil.error("other error", e);
-            return "{\"resp\":\"other error" + ", " + ExceptionUtil.getRootCauseMessage(e) + "\"}";
+            return ReqResponse.error(ExceptionUtil.getRootCauseMessage(e));
         }
     }
 
     @RequestMapping("/rule/query")
-    public String ruleQuery(String json) throws Exception {
+    public ReqResponse ruleQuery(String json) throws Exception {
         try {
-            JSONObject result = new JSONObject();
-            result.put("resp", MethodInvokeListenerManager.queryRule());
-            return result.toJSONString(0);
+            return ReqResponse.success(MethodInvokeListenerManager.queryRule());
         } catch (Throwable e) {
             //其他异常，可能是业务定义的异常，需要返回
             LogUtil.error("other error", e);
-            return "{\"resp\":\"other error" + ", " + ExceptionUtil.getRootCauseMessage(e) + "\"}";
+            return ReqResponse.error(ExceptionUtil.getRootCauseMessage(e));
         }
     }
 }

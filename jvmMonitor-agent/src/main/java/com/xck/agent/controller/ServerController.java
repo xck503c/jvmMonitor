@@ -4,6 +4,7 @@ import cn.hutool.core.exceptions.ExceptionUtil;
 import cn.hutool.json.JSONArray;
 import cn.hutool.json.JSONObject;
 import com.xck.common.annotation.RequestMapping;
+import com.xck.common.http.ReqResponse;
 import com.xck.common.util.ClassAgentUtil;
 import com.xck.common.util.LogUtil;
 
@@ -19,19 +20,19 @@ import java.lang.management.ManagementFactory;
 public class ServerController {
 
     @RequestMapping("/activeTest")
-    public String activeTest(String json) throws Exception {
-        return "{\"resp\":\"ok\"}";
+    public ReqResponse activeTest(String json) throws Exception {
+        return ReqResponse.success();
     }
 
     @RequestMapping("/pid")
-    public String pid(String json) throws Exception{
+    public ReqResponse pid(String json) throws Exception{
         String name = ManagementFactory.getRuntimeMXBean().getName();
         String pid = name.split("@")[0];
-        return "{\"resp\":\"" + pid + "\"}";
+        return ReqResponse.success("success", pid);
     }
 
     @RequestMapping("/staticMethod")
-    public String staticMethod(String json) throws Exception {
+    public ReqResponse staticMethod(String json) throws Exception {
 
         JSONObject jsonObject = new JSONObject(json);
         String className = jsonObject.getStr("className");
@@ -42,18 +43,16 @@ public class ServerController {
         try {
             Object invokeResult = ClassAgentUtil.methodStaticInvoke(className, methodName, jsonArray);
             invokeResultStr = ClassAgentUtil.obj2Json(invokeResult);
-
-            JSONObject result = new JSONObject();
-            result.put("resp", invokeResultStr);
-            return result.toJSONString(0);
+            return ReqResponse.success(invokeResult);
         } catch (ClassNotFoundException e) {
-            return "{\"resp\":\"class no found\"}";
+            return ReqResponse.error("class no found");
         } catch (NoSuchMethodException e) {
-            return "{\"resp\":\"method no found\"}";
+            return ReqResponse.error("method no found");
         } catch (Throwable e) {
+            e.printStackTrace();
             //其他异常，可能是业务定义的异常，需要返回
             LogUtil.error("other error", e);
-            return "{\"resp\":\"other error" + ", " + ExceptionUtil.getRootCauseMessage(e) + "\"}";
+            return ReqResponse.error(ExceptionUtil.getRootCauseMessage(e));
         } finally {
             LogUtil.info(String.format("invoke class=%s method=%s args=%s, result=%s"
                     , className, methodName, jsonArray, invokeResultStr));
